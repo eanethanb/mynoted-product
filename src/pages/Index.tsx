@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import TabNavigation from '@/components/TabNavigation';
 import PeerProfiles from '@/components/screens/PeerProfiles';
@@ -19,6 +19,13 @@ const tabs = [
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('peers');
+  const [visitedTabs, setVisitedTabs] = useState<string[]>(['peers']);
+
+  useEffect(() => {
+    if (!visitedTabs.includes(activeTab)) {
+      setVisitedTabs(prev => [...prev, activeTab]);
+    }
+  }, [activeTab, visitedTabs]);
 
   const renderActiveScreen = () => {
     switch (activeTab) {
@@ -40,7 +47,7 @@ const Index = () => {
   };
 
   return (
-    <Layout>
+    <Layout activeTab={activeTab} visitedTabs={visitedTabs}>
       <TabNavigation tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       {renderActiveScreen()}
     </Layout>
