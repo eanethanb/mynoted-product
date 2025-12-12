@@ -14,15 +14,16 @@ interface PaywallModalProps {
 
 const features = [
   'Unlimited peer editing',
-  'Unlimited skill refinements',
+  'Unlimited skill refinement',
   'Unlimited quadrant simulations',
   'Unlimited custom courses',
-  'Unlimited JD → Course',
-  'Unlimited Manager Feedback → Course',
-  'Resume upload for more accurate recommendations',
+  'JD → Course generator',
+  'Manager Feedback → Course generator',
+  'Resume upload for advanced refinement',
   'Set future goals',
-  'Save multiple versions of reports',
-  'AI-refined learning path',
+  'Save multiple versions',
+  'Run updated report as many times as you want',
+  'Full AI-refined learning path',
 ];
 
 const PaywallModal = ({ open, onClose }: PaywallModalProps) => {
