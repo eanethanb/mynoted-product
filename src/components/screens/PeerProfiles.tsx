@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Edit2, Plus, X, Link } from 'lucide-react';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 
 const PeerProfiles = () => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -128,6 +129,8 @@ const PeerProfiles = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      <Disclaimer />
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>

@@ -4,6 +4,7 @@ import SkillCell from '@/components/SkillCell';
 import { Check, X, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 
 const ComparativeSkillAnalysis = () => {
   const [feedbackGiven, setFeedbackGiven] = useState<Record<string, 'agree' | 'disagree' | null>>({});
@@ -193,6 +194,8 @@ const ComparativeSkillAnalysis = () => {
           </ul>
         </div>
       </div>
+
+      <Disclaimer />
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>

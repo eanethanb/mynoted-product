@@ -4,6 +4,7 @@ import GapBadge from '@/components/GapBadge';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight, BookOpen, Clock, Sparkles } from 'lucide-react';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 
 const SkillGapCourses = () => {
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
@@ -103,6 +104,8 @@ const SkillGapCourses = () => {
           </div>
         ))}
       </div>
+
+      <Disclaimer />
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>

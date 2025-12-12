@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 import { RefreshCw } from 'lucide-react';
 
 const SkillMapping = () => {
@@ -164,6 +165,8 @@ const SkillMapping = () => {
           </span>
         </div>
       </div>
+
+      <Disclaimer />
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>

@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { skillGaps } from '@/data/mockData';
 import GapBadge from '@/components/GapBadge';
-import { ChevronRight, Check, AlertTriangle, X } from 'lucide-react';
+import { ChevronRight, Check, AlertTriangle, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 
 type AccuracyType = 'accurate' | 'partial' | 'not-relevant';
 
@@ -21,10 +26,25 @@ const notRelevantOptions = [
   'Low priority now',
 ];
 
+interface CustomSkillGap {
+  id: string;
+  title: string;
+  description: string;
+  priority: 'High' | 'Medium' | 'Low';
+}
+
 const SkillGapsAnalysis = () => {
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
   const [editCount, setEditCount] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
+  
+  // Custom skill gap state
+  const [customGaps, setCustomGaps] = useState<CustomSkillGap[]>([]);
+  const [addGapCount, setAddGapCount] = useState(0);
+  const [showAddGapModal, setShowAddGapModal] = useState(false);
+  const [newGapTitle, setNewGapTitle] = useState('');
+  const [newGapDescription, setNewGapDescription] = useState('');
+  const [newGapPriority, setNewGapPriority] = useState<'High' | 'Medium' | 'Low'>('Medium');
 
   const handleAccuracyChange = (gapId: string, accuracy: AccuracyType) => {
     // Check if this is a new edit (not just changing an existing selection)
@@ -58,6 +78,43 @@ const SkillGapsAnalysis = () => {
     });
   };
 
+  const handleAddSkillGap = () => {
+    if (addGapCount >= 2) {
+      setShowPaywall(true);
+      return;
+    }
+    setShowAddGapModal(true);
+  };
+
+  const handleSaveNewGap = () => {
+    if (!newGapTitle.trim()) return;
+    
+    const newGap: CustomSkillGap = {
+      id: `custom-${Date.now()}`,
+      title: newGapTitle,
+      description: newGapDescription,
+      priority: newGapPriority,
+    };
+    
+    setCustomGaps([...customGaps, newGap]);
+    setAddGapCount((prev) => prev + 1);
+    setShowAddGapModal(false);
+    setNewGapTitle('');
+    setNewGapDescription('');
+    setNewGapPriority('Medium');
+  };
+
+  const getPriorityColor = (priority: 'High' | 'Medium' | 'Low') => {
+    switch (priority) {
+      case 'High':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'Medium':
+        return 'bg-warning/10 text-warning border-warning/20';
+      case 'Low':
+        return 'bg-success/10 text-success border-success/20';
+    }
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
@@ -69,18 +126,50 @@ const SkillGapsAnalysis = () => {
 
       {/* Priority Gaps Banner */}
       <div className="mb-6 rounded-lg border border-primary/20 bg-accent/30 p-5">
-        <div className="flex items-start gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-            <AlertTriangle className="h-4 w-4 text-primary" />
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
+              <AlertTriangle className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-foreground">Top 3 Priority Gaps</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Critical for COO role excellence and advancement. These three gaps (all at score 1, vs. peer maximum of 3) represent the most significant development opportunities for operational leadership effectiveness. Expected time-to-impact: 6-12 months with targeted interventions.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-foreground">Top 3 Priority Gaps</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Critical for COO role excellence and advancement. These three gaps (all at score 1, vs. peer maximum of 3) represent the most significant development opportunities for operational leadership effectiveness. Expected time-to-impact: 6-12 months with targeted interventions.
-            </p>
-          </div>
+          <Button onClick={handleAddSkillGap} className="gap-2 whitespace-nowrap">
+            <Plus className="h-4 w-4" />
+            Add Skill Gap
+          </Button>
         </div>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Free: Add + prioritise up to 2 skill gaps. ({2 - addGapCount} remaining)
+        </p>
       </div>
+
+      {/* Custom Skill Gaps */}
+      {customGaps.length > 0 && (
+        <div className="mb-6 space-y-4">
+          <h3 className="text-lg font-semibold text-foreground">Your Added Skill Gaps</h3>
+          {customGaps.map((gap) => (
+            <div
+              key={gap.id}
+              className="rounded-lg border border-border bg-card p-5 transition-shadow hover:shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-foreground">{gap.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{gap.description}</p>
+                </div>
+                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${getPriorityColor(gap.priority)}`}>
+                  {gap.priority} Priority
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Skill Gap Cards */}
       <div className="space-y-4">
@@ -212,6 +301,59 @@ const SkillGapsAnalysis = () => {
           </div>
         </div>
       </div>
+
+      <Disclaimer />
+
+      {/* Add Skill Gap Modal */}
+      <Dialog open={showAddGapModal} onOpenChange={setShowAddGapModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Skill Gap</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="gapTitle">Skill Gap Title</Label>
+              <Input
+                id="gapTitle"
+                placeholder="e.g., Financial Modeling"
+                value={newGapTitle}
+                onChange={(e) => setNewGapTitle(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="gapDescription">Description</Label>
+              <Textarea
+                id="gapDescription"
+                placeholder="Describe why this skill gap is important..."
+                value={newGapDescription}
+                onChange={(e) => setNewGapDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Priority Level</Label>
+              <Select value={newGapPriority} onValueChange={(v) => setNewGapPriority(v as 'High' | 'Medium' | 'Low')}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="High">High Priority</SelectItem>
+                  <SelectItem value="Medium">Medium Priority</SelectItem>
+                  <SelectItem value="Low">Low Priority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAddGapModal(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveNewGap} disabled={!newGapTitle.trim()}>
+              Add Skill Gap
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>

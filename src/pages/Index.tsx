@@ -14,7 +14,7 @@ const tabs = [
   { id: 'mapping', label: 'Skill Mapping vis-à-vis Peers' },
   { id: 'gaps', label: 'Skill Gap Analysis' },
   { id: 'courses', label: 'Recommended Courses' },
-  { id: 'create', label: 'Create Course' },
+  { id: 'create', label: 'Create Free Course' },
 ];
 
 const Index = () => {
