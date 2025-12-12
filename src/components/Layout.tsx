@@ -1,13 +1,24 @@
 import { ReactNode, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Play, CheckCircle2 } from 'lucide-react';
+import { Play, CheckCircle2, Info, Check } from 'lucide-react';
 import PaywallModal from './PaywallModal';
 
 interface LayoutProps {
   children: ReactNode;
+  activeTab?: string;
+  visitedTabs?: string[];
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const sectionLabels: Record<string, string> = {
+  peers: 'Peer Profiles',
+  comparative: 'Comparative Skill Analysis',
+  mapping: 'Skill Mapping',
+  gaps: 'Skill Gaps Analysis',
+  swot: 'SWOT Analysis',
+  courses: 'Skill Gap Courses',
+};
+
+const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
   const [hasRunReport, setHasRunReport] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -19,12 +30,13 @@ const Layout = ({ children }: LayoutProps) => {
     }
     
     setIsRunning(true);
-    // Simulate report generation
     setTimeout(() => {
       setIsRunning(false);
       setHasRunReport(true);
     }, 2000);
   };
+
+  const sections = ['peers', 'comparative', 'mapping', 'gaps', 'swot', 'courses'];
 
   return (
     <div className="min-h-screen bg-background font-poppins">
@@ -42,15 +54,37 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </header>
       
-      {/* Pre-run guidance banner */}
+      {/* Pre-run guidance banner with section chips */}
       {!hasRunReport && (
-        <div className="border-b border-primary/20 bg-primary/5 px-6 py-3">
-          <div className="mx-auto flex max-w-7xl items-center justify-between">
-            <p className="text-sm text-foreground">
-              <span className="font-medium">Review all sections.</span> You can edit peers, skills, axes, goals, and other signals. 
-              When ready, click <span className="font-semibold text-primary">'Run Updated Report'</span> to generate your personalised career intelligence. 
-              <span className="ml-1 text-muted-foreground">You can run the report once for free.</span>
-            </p>
+        <div className="border-b border-primary/20 bg-primary/5 px-6 py-4">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex items-start gap-3">
+              <Info className="mt-0.5 h-5 w-5 text-primary" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground">Review your report carefully</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  You can make edits across all sections. You get 1 free AI re-run after reviewing everything.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {sections.map((section) => {
+                    const isVisited = visitedTabs.includes(section);
+                    return (
+                      <span
+                        key={section}
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                          isVisited
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {isVisited && <Check className="h-3 w-3" />}
+                        {sectionLabels[section]}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
