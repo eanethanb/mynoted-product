@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, GripVertical, FileText, Upload, MessageSquare, Sparkles } from 'lucide-react';
 import PaywallModal from '@/components/PaywallModal';
+import Disclaimer from '@/components/Disclaimer';
 
 interface Topic {
   id: string;
@@ -170,7 +171,7 @@ const CreateCourse = () => {
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Create Course</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Create Free Course</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Build personalized learning paths tailored to your career goals
         </p>
@@ -462,6 +463,8 @@ const CreateCourse = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Disclaimer />
 
       <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>
