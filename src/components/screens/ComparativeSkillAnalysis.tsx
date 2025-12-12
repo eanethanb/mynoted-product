@@ -31,15 +31,15 @@ const ComparativeSkillAnalysis = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Comparative Skill Analysis</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className="mb-6 text-center md:mb-8">
+        <h1 className="text-xl font-semibold text-foreground md:text-2xl">Comparative Skill Analysis</h1>
+        <p className="mt-2 text-xs text-muted-foreground md:text-sm">
           Analysis across 10 skill clusters (0=low, 3=strong)
         </p>
       </div>
 
       {/* Heatmap Table */}
-      <div className="mb-6 overflow-x-auto rounded-lg border border-border bg-card">
+      <div className="mb-6 -mx-4 overflow-x-auto rounded-lg border border-border bg-card px-4 md:mx-0 md:px-0">
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">

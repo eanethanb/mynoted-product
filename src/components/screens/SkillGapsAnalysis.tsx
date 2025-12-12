@@ -117,52 +117,52 @@ const SkillGapsAnalysis = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Skill Gaps Analysis</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className="mb-6 text-center md:mb-8">
+        <h1 className="text-xl font-semibold text-foreground md:text-2xl">Skill Gaps Analysis</h1>
+        <p className="mt-2 text-xs text-muted-foreground md:text-sm">
           Targeted upskilling roadmap for you
         </p>
       </div>
 
       {/* Priority Gaps Banner */}
-      <div className="mb-6 rounded-lg border border-primary/20 bg-accent/30 p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <AlertTriangle className="h-4 w-4 text-primary" />
+      <div className="mb-4 rounded-lg border border-primary/20 bg-accent/30 p-3 md:mb-6 md:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-2 md:gap-3">
+            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 md:h-8 md:w-8">
+              <AlertTriangle className="h-3 w-3 text-primary md:h-4 md:w-4" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground">Top 3 Priority Gaps</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Critical for COO role excellence and advancement. These three gaps (all at score 1, vs. peer maximum of 3) represent the most significant development opportunities for operational leadership effectiveness. Expected time-to-impact: 6-12 months with targeted interventions.
+              <h3 className="text-sm font-semibold text-foreground md:text-base">Top 3 Priority Gaps</h3>
+              <p className="mt-1 text-xs text-muted-foreground md:text-sm">
+                Critical for COO role excellence and advancement. These three gaps represent the most significant development opportunities.
               </p>
             </div>
           </div>
-          <Button onClick={handleAddSkillGap} className="gap-2 whitespace-nowrap">
+          <Button onClick={handleAddSkillGap} className="gap-2 whitespace-nowrap w-full sm:w-auto" size="sm">
             <Plus className="h-4 w-4" />
             Add Skill Gap
           </Button>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 text-[10px] text-muted-foreground md:text-xs">
           Free: Add + prioritise up to 2 skill gaps. ({2 - addGapCount} remaining)
         </p>
       </div>
 
       {/* Custom Skill Gaps */}
       {customGaps.length > 0 && (
-        <div className="mb-6 space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Your Added Skill Gaps</h3>
+        <div className="mb-4 space-y-3 md:mb-6 md:space-y-4">
+          <h3 className="text-base font-semibold text-foreground md:text-lg">Your Added Skill Gaps</h3>
           {customGaps.map((gap) => (
             <div
               key={gap.id}
-              className="rounded-lg border border-border bg-card p-5 transition-shadow hover:shadow-sm"
+              className="rounded-lg border border-border bg-card p-3 transition-shadow hover:shadow-sm md:p-5"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-foreground">{gap.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{gap.description}</p>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-semibold text-foreground md:text-lg">{gap.title}</h3>
+                  <p className="mt-1 text-xs text-muted-foreground md:text-sm">{gap.description}</p>
                 </div>
-                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${getPriorityColor(gap.priority)}`}>
+                <span className={`self-start rounded-full border px-2 py-0.5 text-[10px] font-medium md:px-3 md:py-1 md:text-xs ${getPriorityColor(gap.priority)}`}>
                   {gap.priority} Priority
                 </span>
               </div>
@@ -172,32 +172,32 @@ const SkillGapsAnalysis = () => {
       )}
 
       {/* Skill Gap Cards */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {skillGaps.map((gap) => (
           <div
             key={gap.id}
-            className="rounded-lg border border-border bg-card p-5 transition-shadow hover:shadow-sm"
+            className="rounded-lg border border-border bg-card p-3 transition-shadow hover:shadow-sm md:p-5"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-foreground">{gap.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{gap.description}</p>
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+              <div className="flex-1 min-w-0">
+                <h3 className="text-base font-semibold text-foreground md:text-lg">{gap.title}</h3>
+                <p className="mt-1 text-xs text-muted-foreground md:text-sm">{gap.description}</p>
               </div>
               <GapBadge score={gap.gapScore} />
             </div>
 
-            <div className="mt-4">
-              <Button variant="outline" size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary-dark">
+            <div className="mt-3 md:mt-4">
+              <Button variant="outline" size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary-dark text-xs md:text-sm">
                 {gap.category}
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
             </div>
 
-            <div className="mt-4">
-              <h4 className="text-sm font-medium text-foreground">ACTION ITEMS:</h4>
-              <ul className="mt-2 space-y-1.5">
+            <div className="mt-3 md:mt-4">
+              <h4 className="text-xs font-medium text-foreground md:text-sm">ACTION ITEMS:</h4>
+              <ul className="mt-1.5 space-y-1 md:mt-2 md:space-y-1.5">
                 {gap.actionItems.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                  <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground md:text-sm">
                     <span className="mt-0.5 text-primary">→</span>
                     {item}
                   </li>
@@ -278,25 +278,25 @@ const SkillGapsAnalysis = () => {
       </div>
 
       {/* Timeline */}
-      <div className="mt-8">
-        <h3 className="mb-4 text-lg font-semibold text-foreground">Expected Timeline & Impact</h3>
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-lg border border-border bg-card p-5 text-center">
-            <div className="text-2xl font-bold text-primary">90 Days</div>
-            <p className="mt-2 text-sm text-muted-foreground">
+      <div className="mt-6 md:mt-8">
+        <h3 className="mb-3 text-base font-semibold text-foreground md:mb-4 md:text-lg">Expected Timeline & Impact</h3>
+        <div className="grid gap-3 md:gap-4 md:grid-cols-3">
+          <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
+            <div className="text-xl font-bold text-primary md:text-2xl">90 Days</div>
+            <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
               Insurance pilot launched, first PRD shipped, investor deck v1.0
             </p>
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 text-center">
-            <div className="text-2xl font-bold text-success">180 Days</div>
-            <p className="mt-2 text-sm text-muted-foreground">
+          <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
+            <div className="text-xl font-bold text-success md:text-2xl">180 Days</div>
+            <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
               Insurance score +1.5, product ownership proven, board materials standardized
             </p>
           </div>
-          <div className="rounded-lg border border-border bg-card p-5 text-center">
-            <div className="text-2xl font-bold text-destructive">12 Months</div>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Complete COO profile, quadrant position (6, 9), ready for larger scale operational leadership role
+          <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
+            <div className="text-xl font-bold text-destructive md:text-2xl">12 Months</div>
+            <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
+              Complete COO profile, quadrant position (6, 9), ready for larger scale role
             </p>
           </div>
         </div>

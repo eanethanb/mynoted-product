@@ -45,8 +45,8 @@ const PeerProfiles = () => {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">Peer Profiles</h2>
+      <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-base font-semibold text-foreground md:text-lg">Peer Profiles</h2>
         <Button variant="outline" size="sm" onClick={() => setShowEditModal(true)}>
           <Edit2 className="mr-2 h-4 w-4" />
           Edit Peer Set
@@ -57,18 +57,18 @@ const PeerProfiles = () => {
         {peerList.map((peer) => (
           <div
             key={peer.id}
-            className={`rounded-lg border bg-card p-4 transition-shadow hover:shadow-sm ${
+            className={`rounded-lg border bg-card p-3 transition-shadow hover:shadow-sm md:p-4 ${
               peer.isUser ? 'border-primary bg-primary/5' : 'border-border'
             }`}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-foreground">{peer.name}</h3>
+                  <h3 className="text-sm font-semibold text-foreground md:text-base">{peer.name}</h3>
                 </div>
-                <p className="mt-1 text-sm text-muted-foreground">{peer.description}</p>
+                <p className="mt-1 text-xs text-muted-foreground md:text-sm">{peer.description}</p>
               </div>
-              <div className="flex shrink-0 gap-3 text-sm">
+              <div className="flex shrink-0 gap-3 text-xs md:text-sm">
                 <span className="text-primary">P/T: {peer.productTechScore}</span>
                 <span className="text-success">GTM: {peer.gtmScore}</span>
               </div>

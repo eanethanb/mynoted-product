@@ -42,25 +42,25 @@ const SkillGapCourses = () => {
         {/* Back button */}
         <button
           onClick={() => setActiveCourse(null)}
-          className="mb-4 flex items-center gap-2 text-sm text-primary hover:underline"
+          className="mb-4 flex items-center gap-2 text-xs text-primary hover:underline md:text-sm"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
           Back to courses
         </button>
 
         {/* Course Title */}
-        <h1 className="mb-6 text-center text-2xl font-semibold text-primary">
+        <h1 className="mb-4 text-center text-lg font-semibold text-primary md:mb-6 md:text-2xl">
           {currentCourse.title}
         </h1>
 
         {/* Content Type Tabs */}
-        <div className="mb-6 flex justify-center">
+        <div className="mb-4 flex justify-center md:mb-6">
           <div className="inline-flex rounded-lg border border-border bg-card p-1">
             {(['videos', 'quiz', 'flashcards'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`rounded-md px-6 py-2 text-sm font-medium transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors md:px-6 md:py-2 md:text-sm ${
                   activeTab === tab
                     ? 'bg-primary text-primary-foreground'
                     : 'text-muted-foreground hover:text-foreground'
@@ -72,12 +72,12 @@ const SkillGapCourses = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-[280px_1fr]">
           {/* Sidebar - Chapter Navigation */}
-          <div className="rounded-lg border border-border bg-card p-4">
-            <div className="mb-4">
-              <h3 className="font-semibold text-foreground">{currentCourse.title}</h3>
-              <p className="text-sm text-primary">Chapters ({currentCourse.chapters?.length || 0})</p>
+          <div className="rounded-lg border border-border bg-card p-3 md:p-4">
+            <div className="mb-3 md:mb-4">
+              <h3 className="text-sm font-semibold text-foreground md:text-base">{currentCourse.title}</h3>
+              <p className="text-xs text-primary md:text-sm">Chapters ({currentCourse.chapters?.length || 0})</p>
             </div>
 
             <div className="space-y-1">
@@ -125,10 +125,9 @@ const SkillGapCourses = () => {
             </div>
           </div>
 
-          {/* Main Content - Video Grid */}
           <div>
             {activeTab === 'videos' && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-3 grid-cols-2 md:gap-4 lg:grid-cols-4">
                 {videoResources.map((video) => (
                   <div
                     key={video.id}
@@ -136,22 +135,22 @@ const SkillGapCourses = () => {
                   >
                     <div className="relative aspect-video bg-muted">
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/40">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/90 text-primary-foreground transition-transform group-hover:scale-110">
-                          <Play className="h-5 w-5" fill="currentColor" />
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/90 text-primary-foreground transition-transform group-hover:scale-110 md:h-12 md:w-12">
+                          <Play className="h-3.5 w-3.5 md:h-5 md:w-5" fill="currentColor" />
                         </div>
                       </div>
                     </div>
-                    <div className="p-3">
-                      <h4 className="line-clamp-2 text-sm font-medium text-foreground">
+                    <div className="p-2 md:p-3">
+                      <h4 className="line-clamp-2 text-xs font-medium text-foreground md:text-sm">
                         {video.title}
                       </h4>
-                      <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground md:mt-2 md:gap-3 md:text-xs">
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-2.5 w-2.5 md:h-3 md:w-3" />
                           {video.duration}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
+                          <Eye className="h-2.5 w-2.5 md:h-3 md:w-3" />
                           {video.views}
                         </span>
                       </div>
@@ -194,22 +193,22 @@ const SkillGapCourses = () => {
   // Course listing view
   return (
     <div className="animate-fade-in">
-      <div className="mb-8 text-center">
-        <h1 className="text-2xl font-semibold text-foreground">Your Skill Gap Courses</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+      <div className="mb-6 text-center md:mb-8">
+        <h1 className="text-xl font-semibold text-foreground md:text-2xl">Your Skill Gap Courses</h1>
+        <p className="mt-2 text-xs text-muted-foreground md:text-sm">
           Structured learning paths with levels, outcomes, and success metrics
         </p>
       </div>
 
       {/* Refinement Banner */}
-      <div className="mb-6 flex items-center justify-between rounded-lg border border-primary/20 bg-accent/30 p-4">
-        <div className="flex items-center gap-3">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <p className="text-sm text-muted-foreground">
+      <div className="mb-4 flex flex-col gap-3 rounded-lg border border-primary/20 bg-accent/30 p-3 sm:flex-row sm:items-center sm:justify-between md:mb-6 md:p-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <Sparkles className="h-4 w-4 shrink-0 text-primary md:h-5 md:w-5" />
+          <p className="text-xs text-muted-foreground md:text-sm">
             Your learning path is based on AI + your inputs. Want a refined personalised course plan?
           </p>
         </div>
-        <Button onClick={handleRefinePath} size="sm">
+        <Button onClick={handleRefinePath} size="sm" className="w-full sm:w-auto">
           Refine My Learning Path
         </Button>
       </div>

@@ -43,15 +43,15 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
 
   return (
     <div className="min-h-screen bg-background font-poppins">
-      <header className="border-b border-border bg-card px-6 py-4">
+      <header className="border-b border-border bg-card px-4 py-3 md:px-6 md:py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <span className="text-sm font-bold text-primary-foreground">M</span>
             </div>
-            <span className="text-lg font-semibold text-foreground">MyNoted AI</span>
+            <span className="text-base font-semibold text-foreground md:text-lg">MyNoted AI</span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="hidden items-center gap-4 sm:flex">
             <span className="text-sm text-muted-foreground">Career Intelligence Workspace</span>
           </div>
         </div>
@@ -59,29 +59,29 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
       
       {/* Pre-run guidance banner with section chips */}
       {!hasRunReport && (
-        <div className="border-b border-primary/20 bg-primary/5 px-6 py-4">
+        <div className="border-b border-primary/20 bg-primary/5 px-4 py-3 md:px-6 md:py-4">
           <div className="mx-auto max-w-7xl">
-            <div className="flex items-start gap-3">
-              <Info className="mt-0.5 h-5 w-5 text-primary" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-foreground">Review your report carefully</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+            <div className="flex items-start gap-2 md:gap-3">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary md:h-5 md:w-5" />
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-semibold text-foreground md:text-base">Review your report carefully</h3>
+                <p className="mt-1 text-xs text-muted-foreground md:text-sm">
                   You can make edits across all sections. You get 1 free AI re-run after reviewing everything.
                 </p>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap gap-1.5 md:mt-3 md:gap-2">
                   {sections.map((section) => {
                     const isVisited = visitedTabs.includes(section);
                     return (
                       <span
                         key={section}
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors md:gap-1.5 md:px-3 md:py-1 md:text-xs ${
                           isVisited
                             ? 'bg-green-100 text-green-700'
                             : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {isVisited && <Check className="h-3 w-3" />}
-                        {sectionLabels[section]}
+                        {isVisited && <Check className="h-2.5 w-2.5 md:h-3 md:w-3" />}
+                        <span className="truncate">{sectionLabels[section]}</span>
                       </span>
                     );
                   })}
@@ -94,24 +94,24 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
       
       {/* Post-run success banner */}
       {hasRunReport && (
-        <div className="border-b border-green-200 bg-green-50 px-6 py-3">
+        <div className="border-b border-green-200 bg-green-50 px-4 py-2 md:px-6 md:py-3">
           <div className="mx-auto flex max-w-7xl items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <p className="text-sm text-green-800">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-green-600" />
+            <p className="text-xs text-green-800 md:text-sm">
               Your report has been generated. To run again with new edits, upgrade to MyNoted Pro.
             </p>
           </div>
         </div>
       )}
       
-      <main className="mx-auto max-w-7xl px-6 py-6 pb-24">
+      <main className="mx-auto max-w-7xl px-4 py-4 pb-28 md:px-6 md:py-6 md:pb-24">
         {children}
       </main>
       
       {/* Persistent Run Report Button */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-card px-6 py-4 shadow-lg">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="text-sm text-muted-foreground">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-card px-4 py-3 shadow-lg md:px-6 md:py-4">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-xs text-muted-foreground md:text-sm">
             {!hasRunReport 
               ? (isRunButtonEnabled 
                   ? "All sections reviewed! Click to generate your personalised career intelligence."
@@ -123,7 +123,7 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
             onClick={handleRunReport}
             disabled={isRunning || (!isRunButtonEnabled && !hasRunReport)}
             className={cn(
-              "gap-2",
+              "gap-2 w-full sm:w-auto",
               !isRunButtonEnabled && !hasRunReport && "opacity-50 cursor-not-allowed"
             )}
             variant={hasRunReport ? "outline" : "default"}
