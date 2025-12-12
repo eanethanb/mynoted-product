@@ -2,6 +2,7 @@ import { ReactNode, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, CheckCircle2, Info, Check } from 'lucide-react';
 import PaywallModal from './PaywallModal';
+import { cn } from '@/lib/utils';
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,8 +15,8 @@ const sectionLabels: Record<string, string> = {
   comparative: 'Comparative Skill Analysis',
   mapping: 'Skill Mapping',
   gaps: 'Skill Gaps Analysis',
-  swot: 'SWOT Analysis',
-  courses: 'Skill Gap Courses',
+  courses: 'Recommended Courses',
+  create: 'Create Free Course',
 };
 
 const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
@@ -36,7 +37,9 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
     }, 2000);
   };
 
-  const sections = ['peers', 'comparative', 'mapping', 'gaps', 'swot', 'courses'];
+  const sections = ['peers', 'comparative', 'mapping', 'gaps', 'courses', 'create'];
+  const allSectionsVisited = sections.every(section => visitedTabs.includes(section));
+  const isRunButtonEnabled = allSectionsVisited;
 
   return (
     <div className="min-h-screen bg-background font-poppins">
@@ -110,14 +113,19 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="text-sm text-muted-foreground">
             {!hasRunReport 
-              ? "Make your edits, then run the report to see updated results."
+              ? (isRunButtonEnabled 
+                  ? "All sections reviewed! Click to generate your personalised career intelligence."
+                  : "Visit all sections to enable the AI report generation.")
               : "Report generated. Upgrade to run unlimited updates."
             }
           </div>
           <Button 
             onClick={handleRunReport}
-            disabled={isRunning}
-            className="gap-2"
+            disabled={isRunning || (!isRunButtonEnabled && !hasRunReport)}
+            className={cn(
+              "gap-2",
+              !isRunButtonEnabled && !hasRunReport && "opacity-50 cursor-not-allowed"
+            )}
             variant={hasRunReport ? "outline" : "default"}
           >
             <Play className="h-4 w-4" />
