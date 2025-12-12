@@ -157,9 +157,9 @@ export const courses: Course[] = [
     levels: 3,
     gapScore: 2,
     chapters: [
-      { id: 'cx-fundamentals', title: 'CX Fundamentals', lessons: ['CX Frameworks', 'NPS CSAT CES', 'Touchpoint Map', 'Feedback System'] },
-      { id: 'journey-design', title: 'Journey Design Voice of Customer', lessons: [] },
-      { id: 'cx-pilot', title: 'CX Pilot', lessons: [] },
+      { id: 'cx-fundamentals', title: 'CX Fundamentals', lessons: ['CX Frameworks & Metrics', 'NPS CSAT CES Deep Dive', 'Customer Touchpoint Mapping', 'Feedback System Design'] },
+      { id: 'journey-design', title: 'Journey Design & Voice of Customer', lessons: ['Customer Journey Mapping', 'VoC Program Setup', 'Persona Development', 'Pain Point Analysis'] },
+      { id: 'cx-pilot', title: 'CX Pilot Implementation', lessons: ['90-Day Pilot Planning', 'Metrics Dashboard Setup', 'Stakeholder Alignment', 'Results Analysis'] },
     ],
   },
   {
@@ -168,6 +168,11 @@ export const courses: Course[] = [
     duration: '9 weeks',
     levels: 3,
     gapScore: 2,
+    chapters: [
+      { id: 'digital-strategy', title: 'Digital Strategy Foundations', lessons: ['Digital Maturity Assessment', 'Technology Stack Planning', 'Change Management Basics', 'ROI Frameworks'] },
+      { id: 'implementation', title: 'Implementation & Automation', lessons: ['Process Automation', 'AI/ML Integration', 'Data Analytics Setup', 'Platform Selection'] },
+      { id: 'digital-leadership', title: 'Digital Leadership', lessons: ['Leading Digital Teams', 'Agile Methodologies', 'Innovation Culture', 'Scaling Digital Initiatives'] },
+    ],
   },
   {
     id: 'stakeholder-course',
@@ -175,6 +180,11 @@ export const courses: Course[] = [
     duration: '4 weeks',
     levels: 3,
     gapScore: 2,
+    chapters: [
+      { id: 'stakeholder-basics', title: 'Stakeholder Mapping & Analysis', lessons: ['Stakeholder Identification', 'Power-Interest Matrix', 'Communication Planning', 'Influence Strategies'] },
+      { id: 'partnership-dev', title: 'Partnership Development', lessons: ['Vendor Economics', 'SLA Frameworks', 'Win-Win Negotiations', 'Contract Management'] },
+      { id: 'relationship-mgmt', title: 'Relationship Management', lessons: ['QBR Best Practices', 'Conflict Resolution', 'Long-term Partnership Building', 'Performance Tracking'] },
+    ],
   },
   {
     id: 'brand-course',
@@ -182,6 +192,11 @@ export const courses: Course[] = [
     duration: '12 weeks',
     levels: 3,
     gapScore: 2,
+    chapters: [
+      { id: 'brand-strategy', title: 'Brand Strategy Fundamentals', lessons: ['Brand Positioning', 'Value Proposition Design', 'Competitive Analysis', 'Brand Architecture'] },
+      { id: 'marketing-ops', title: 'Marketing Operations for COOs', lessons: ['Marketing-Ops Alignment', 'Campaign ROI Measurement', 'Customer Acquisition Metrics', 'Brand Consistency'] },
+      { id: 'integrated-marketing', title: 'Integrated Marketing Leadership', lessons: ['Cross-functional Collaboration', 'Marketing Technology Stack', 'Data-Driven Decisions', 'Brand Experience Design'] },
+    ],
   },
 ];
 
