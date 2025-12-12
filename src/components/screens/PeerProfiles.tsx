@@ -20,7 +20,7 @@ const PeerProfiles = () => {
   const [removedPeer, setRemovedPeer] = useState<string | null>(null);
 
   const handleRemovePeer = (peerId: string) => {
-    if (editCount >= 1) {
+    if (editCount >= 2) {
       setShowPaywall(true);
       return;
     }
@@ -30,7 +30,7 @@ const PeerProfiles = () => {
   };
 
   const handleAddPeer = () => {
-    if (editCount >= 1) {
+    if (editCount >= 2) {
       setShowPaywall(true);
       return;
     }
@@ -122,7 +122,7 @@ const PeerProfiles = () => {
                 </Button>
               </div>
               <p className="mt-1.5 text-xs text-muted-foreground">
-                Free tier: 1 peer edit. Upgrade for unlimited edits.
+                Free tier: 2 peer edits. Upgrade for unlimited edits.
               </p>
             </div>
           </div>

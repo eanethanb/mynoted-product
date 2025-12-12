@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import PaywallModal from '@/components/PaywallModal';
 
 type AccuracyType = 'accurate' | 'partial' | 'not-relevant';
 
@@ -15,15 +16,29 @@ interface GapFeedback {
 }
 
 const notRelevantOptions = [
-  'I already have this skill',
+  'Already strong',
   'Not needed for my role',
   'Low priority now',
 ];
 
 const SkillGapsAnalysis = () => {
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
+  const [editCount, setEditCount] = useState(0);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const handleAccuracyChange = (gapId: string, accuracy: AccuracyType) => {
+    // Check if this is a new edit (not just changing an existing selection)
+    const isNewEdit = !feedback[gapId]?.accuracy;
+    
+    if (isNewEdit && editCount >= 2) {
+      setShowPaywall(true);
+      return;
+    }
+    
+    if (isNewEdit) {
+      setEditCount((prev) => prev + 1);
+    }
+    
     setFeedback((prev) => ({
       ...prev,
       [gapId]: { ...prev[gapId], accuracy, notRelevantReasons: [] },
@@ -197,6 +212,8 @@ const SkillGapsAnalysis = () => {
           </div>
         </div>
       </div>
+
+      <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
     </div>
   );
 };

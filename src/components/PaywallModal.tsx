@@ -13,12 +13,16 @@ interface PaywallModalProps {
 }
 
 const features = [
-  'Edit multiple peers',
-  'Refine skill gaps',
-  'Re-rank priorities',
-  'Add resume signals',
-  'Set future career goals',
-  'Generate refined learning path',
+  'Unlimited peer editing',
+  'Unlimited skill refinements',
+  'Unlimited quadrant simulations',
+  'Unlimited custom courses',
+  'Unlimited JD → Course',
+  'Unlimited Manager Feedback → Course',
+  'Resume upload for more accurate recommendations',
+  'Set future goals',
+  'Save multiple versions of reports',
+  'AI-refined learning path',
 ];
 
 const PaywallModal = ({ open, onClose }: PaywallModalProps) => {
@@ -30,7 +34,7 @@ const PaywallModal = ({ open, onClose }: PaywallModalProps) => {
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <DialogTitle className="text-center text-xl font-semibold">
-            Turn this into your personalised career intelligence.
+            Unlock Unlimited Personalisation & Career Intelligence
           </DialogTitle>
         </DialogHeader>
         <div className="mt-4 space-y-3">
@@ -45,7 +49,7 @@ const PaywallModal = ({ open, onClose }: PaywallModalProps) => {
         </div>
         <div className="mt-6">
           <Button className="w-full" size="lg" variant="premium">
-            Upgrade to Unlock Refinements
+            Upgrade to MyNoted Pro
           </Button>
           <button
             onClick={onClose}
