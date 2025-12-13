@@ -18,6 +18,7 @@ interface Topic {
 
 const CreateCourse = () => {
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showManualBuilder, setShowManualBuilder] = useState(false);
   
   // Manual course state
   const [courseName, setCourseName] = useState('');
@@ -213,203 +214,209 @@ const CreateCourse = () => {
           </TabsTrigger>
         </TabsList>
 
-        {/* Topics, PDFs & Textbooks - Unified Course Builder */}
+        {/* Topics, PDFs & Textbooks - Simplified Prompt UI */}
         <TabsContent value="manual">
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Main Builder Panel */}
-            <Card className="lg:col-span-2">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-base md:text-lg">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  Create Any Course
-                </CardTitle>
-                <p className="text-xs md:text-sm text-muted-foreground mt-1">
-                  Build a course from scratch or from uploaded content.
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Primary Prompt Block */}
+            <div className="relative rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/50 to-pink-50/60 p-6 md:p-10 shadow-sm border border-border/30">
+              <div className="text-center mb-6 md:mb-8">
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-2">
+                  What do you want to learn today?
+                </h2>
+                <p className="text-sm md:text-base text-muted-foreground">
+                  Turn PDFs, topics, or table of contents into interactive YouTube lessons, quizzes, and flashcards.
                 </p>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="courseName" className="text-sm">Course Name</Label>
-                  <Input
-                    id="courseName"
-                    placeholder="e.g., Strategic Leadership Fundamentals"
-                    value={courseName}
-                    onChange={(e) => setCourseName(e.target.value)}
-                    className="text-sm"
-                  />
-                </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="courseDescription" className="text-sm">Course Description</Label>
-                  <Textarea
-                    id="courseDescription"
-                    placeholder="Describe what this course will cover..."
-                    value={courseDescription}
-                    onChange={(e) => setCourseDescription(e.target.value)}
-                    rows={3}
-                    className="text-sm"
-                  />
+              {/* Main Input with Inline Actions */}
+              <div className="relative flex items-center bg-background rounded-full shadow-md border border-border/50 overflow-hidden">
+                <Input
+                  placeholder="I want to learn…"
+                  value={courseName}
+                  onChange={(e) => setCourseName(e.target.value)}
+                  className="flex-1 border-0 bg-transparent text-base md:text-lg h-12 md:h-14 px-5 md:px-6 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && courseName.trim()) {
+                      e.preventDefault();
+                      handleCreateManualCourse();
+                    }
+                  }}
+                />
+                <div className="flex items-center gap-1 md:gap-2 pr-2">
+                  <button
+                    className="p-2 md:p-3 hover:bg-muted rounded-full transition-colors"
+                    onClick={() => {}}
+                    title="Attach file"
+                  >
+                    <Upload className="h-5 w-5 text-muted-foreground" />
+                  </button>
+                  <Button
+                    onClick={handleCreateManualCourse}
+                    disabled={!courseName.trim()}
+                    className="rounded-full h-9 md:h-10 px-5 md:px-6"
+                  >
+                    Send
+                  </Button>
                 </div>
+              </div>
+            </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm font-medium">Topics</Label>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={addTopic}
-                      className="rounded-full text-xs px-3 gap-1"
-                    >
-                      <Plus className="h-3 w-3" />
-                      Add Topic
-                    </Button>
+            {/* Upload Actions Card */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all text-sm font-medium text-primary"
+                onClick={() => {}}
+              >
+                <Upload className="h-4 w-4" />
+                Upload PDF textbook
+              </button>
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-amber-500/30 bg-amber-50 hover:bg-amber-100 hover:border-amber-500/50 transition-all text-sm font-medium text-amber-700"
+                onClick={() => {}}
+              >
+                <Image className="h-4 w-4" />
+                Upload Table of Content image
+              </button>
+            </div>
+
+            {/* Manual Topics Toggle */}
+            <div className="text-center">
+              <button
+                onClick={() => setShowManualBuilder(!showManualBuilder)}
+                className="text-sm text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
+              >
+                Or create a course by adding topics manually
+              </button>
+            </div>
+
+            {/* Expandable Manual Builder */}
+            {showManualBuilder && (
+              <Card className="animate-fade-in">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-medium flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    Build with Topics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="courseDescription" className="text-sm">Course Description (Optional)</Label>
+                    <Textarea
+                      id="courseDescription"
+                      placeholder="Describe what this course will cover..."
+                      value={courseDescription}
+                      onChange={(e) => setCourseDescription(e.target.value)}
+                      rows={2}
+                      className="text-sm"
+                    />
                   </div>
 
-                  {topics.length === 0 && (
-                    <p className="text-xs text-muted-foreground py-4 text-center bg-muted/30 rounded-lg border border-dashed border-border">
-                      No topics added yet. Click "Add Topic" or use the quick add panel.
-                    </p>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium">Topics</Label>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={addTopic}
+                        className="rounded-full text-xs px-3 gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Add Topic
+                      </Button>
+                    </div>
+
+                    {topics.length === 0 && (
+                      <div className="flex items-center gap-2 py-3">
+                        <Input
+                          placeholder="Type a topic and press Enter…"
+                          value={quickTopicInput}
+                          onChange={(e) => setQuickTopicInput(e.target.value)}
+                          className="text-sm"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              addQuickTopic();
+                            }
+                          }}
+                        />
+                        <Button 
+                          onClick={addQuickTopic}
+                          disabled={!quickTopicInput.trim()}
+                          size="sm"
+                          className="rounded-full shrink-0"
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Add
+                        </Button>
+                      </div>
+                    )}
+
+                    {topics.map((topic) => (
+                      <div
+                        key={topic.id}
+                        className="rounded-lg border border-border bg-muted/30 p-3"
+                      >
+                        <div className="flex items-center gap-2">
+                          <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                          <Input
+                            placeholder="Topic name"
+                            value={topic.name}
+                            onChange={(e) => updateTopicName(topic.id, e.target.value)}
+                            className="flex-1 text-sm"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeTopic(topic.id)}
+                            className="h-8 w-8"
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+
+                        <div className="mt-2 space-y-2 pl-6">
+                          {topic.subtopics.map((subtopic, index) => (
+                            <Input
+                              key={index}
+                              placeholder="Subtopic"
+                              value={subtopic}
+                              onChange={(e) =>
+                                updateSubtopic(topic.id, index, e.target.value)
+                              }
+                              className="text-sm"
+                            />
+                          ))}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => addSubtopic(topic.id)}
+                            className="text-muted-foreground text-xs"
+                          >
+                            <Plus className="mr-1 h-3 w-3" />
+                            Add Subtopic
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {topics.length > 0 && (
+                    <div className="flex justify-end pt-2">
+                      <Button 
+                        onClick={handleCreateManualCourse} 
+                        className="rounded-full px-6"
+                      >
+                        Create Course
+                      </Button>
+                    </div>
                   )}
 
-                  {topics.map((topic) => (
-                    <div
-                      key={topic.id}
-                      className="rounded-lg border border-border bg-muted/30 p-3 md:p-4"
-                    >
-                      <div className="flex items-center gap-2">
-                        <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
-                        <Input
-                          placeholder="Topic name"
-                          value={topic.name}
-                          onChange={(e) => updateTopicName(topic.id, e.target.value)}
-                          className="flex-1 text-sm"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeTopic(topic.id)}
-                          className="h-8 w-8"
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-
-                      <div className="mt-3 space-y-2 pl-4 md:pl-6">
-                        {topic.subtopics.map((subtopic, index) => (
-                          <Input
-                            key={index}
-                            placeholder="Subtopic"
-                            value={subtopic}
-                            onChange={(e) =>
-                              updateSubtopic(topic.id, index, e.target.value)
-                            }
-                            className="text-xs md:text-sm"
-                          />
-                        ))}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => addSubtopic(topic.id)}
-                          className="text-muted-foreground text-xs"
-                        >
-                          <Plus className="mr-1 h-3 w-3" />
-                          Add Subtopic
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-end pt-2">
-                  <Button 
-                    onClick={handleCreateManualCourse} 
-                    disabled={!courseName}
-                    className="rounded-full px-6"
-                  >
-                    Create Course
-                  </Button>
-                </div>
-
-                <p className="text-xs text-muted-foreground text-center">
-                  Free: 1 custom course, 1 topic. Additional topics or courses require upgrade.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Secondary Panel - Add Content */}
-            <Card className="lg:col-span-1 h-fit">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm md:text-base font-medium">
-                  Add Content (Optional)
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Upload PDF Button */}
-                <button
-                  className="w-full flex items-center gap-3 p-3 md:p-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group"
-                  onClick={() => {}}
-                >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    <Upload className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">Upload PDF textbook</p>
-                    <p className="text-xs text-muted-foreground">Extract chapters & topics</p>
-                  </div>
-                </button>
-
-                {/* Upload TOC Image Button */}
-                <button
-                  className="w-full flex items-center gap-3 p-3 md:p-4 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all group"
-                  onClick={() => {}}
-                >
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                    <Image className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground">Upload Table of Contents</p>
-                    <p className="text-xs text-muted-foreground">Image of textbook TOC</p>
-                  </div>
-                </button>
-
-                {/* Divider */}
-                <div className="flex items-center gap-3 py-1">
-                  <div className="h-px flex-1 bg-border" />
-                  <span className="text-xs text-muted-foreground">or add manually</span>
-                  <div className="h-px flex-1 bg-border" />
-                </div>
-
-                {/* Quick Add Topic Input */}
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Paste a topic, skill gap, or chapter name…"
-                    value={quickTopicInput}
-                    onChange={(e) => setQuickTopicInput(e.target.value)}
-                    className="text-sm"
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addQuickTopic();
-                      }
-                    }}
-                  />
-                  <Button 
-                    onClick={addQuickTopic}
-                    disabled={!quickTopicInput.trim()}
-                    variant="outline"
-                    size="sm"
-                    className="w-full rounded-full"
-                  >
-                    <Plus className="h-3 w-3 mr-1" />
-                    Add
-                  </Button>
-                </div>
-
-                <p className="text-xs text-muted-foreground text-center pt-2">
-                  Create courses from topics, PDFs, or textbooks.
-                </p>
-              </CardContent>
-            </Card>
+                  <p className="text-xs text-muted-foreground text-center">
+                    Free: 1 custom course, 1 topic. Additional topics or courses require upgrade.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </TabsContent>
 
