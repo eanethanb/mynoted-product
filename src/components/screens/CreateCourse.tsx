@@ -191,23 +191,23 @@ const CreateCourse = () => {
       <div className="mb-6 md:mb-8 text-center">
         <h1 className="text-xl md:text-2xl font-semibold text-foreground">Create Free Course</h1>
         <p className="mt-2 text-xs md:text-sm text-muted-foreground">
-          Build personalized learning paths tailored to your career goals
+          Build personalized learning paths tailored to your career
         </p>
       </div>
 
       <Tabs defaultValue="manual" className="w-full">
-        <TabsList className="mb-6 grid w-full grid-cols-3 h-auto">
-          <TabsTrigger value="manual" className="gap-1 md:gap-2 text-xs md:text-sm py-2 md:py-3 flex-col md:flex-row">
+        <TabsList className="mb-6 grid w-full grid-cols-3 h-auto bg-accent/50 rounded-full p-1">
+          <TabsTrigger value="manual" className="gap-1 md:gap-2 text-xs md:text-sm py-2.5 md:py-3 flex-col md:flex-row rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <BookOpen className="h-4 w-4" />
             <span className="hidden sm:inline">Topics, PDFs & Textbooks</span>
             <span className="sm:hidden">Topics</span>
           </TabsTrigger>
-          <TabsTrigger value="jd" className="gap-1 md:gap-2 text-xs md:text-sm py-2 md:py-3 flex-col md:flex-row">
+          <TabsTrigger value="jd" className="gap-1 md:gap-2 text-xs md:text-sm py-2.5 md:py-3 flex-col md:flex-row rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <FileText className="h-4 w-4" />
             <span className="hidden sm:inline">From Job Description</span>
             <span className="sm:hidden">JD</span>
           </TabsTrigger>
-          <TabsTrigger value="feedback" className="gap-1 md:gap-2 text-xs md:text-sm py-2 md:py-3 flex-col md:flex-row">
+          <TabsTrigger value="feedback" className="gap-1 md:gap-2 text-xs md:text-sm py-2.5 md:py-3 flex-col md:flex-row rounded-full data-[state=active]:bg-card data-[state=active]:shadow-sm">
             <MessageSquare className="h-4 w-4" />
             <span className="hidden sm:inline">From Manager Feedback</span>
             <span className="sm:hidden">Feedback</span>
@@ -217,24 +217,32 @@ const CreateCourse = () => {
         {/* Topics, PDFs & Textbooks - Simplified Prompt UI */}
         <TabsContent value="manual">
           <div className="max-w-3xl mx-auto space-y-6">
-            {/* Primary Prompt Block */}
-            <div className="relative rounded-2xl bg-gradient-to-br from-amber-50/80 via-orange-50/50 to-pink-50/60 p-6 md:p-10 shadow-sm border border-border/30">
+            {/* Primary Prompt Block - MyNoted warm gradient */}
+            <div className="relative rounded-2xl bg-gradient-to-br from-background via-accent/30 to-primary/10 p-6 md:p-10 shadow-sm border border-border/40">
+              {/* Decorative badge */}
+              <div className="flex justify-center mb-4">
+                <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-accent/60 text-primary text-xs font-medium">
+                  <Sparkles className="h-3 w-3" />
+                  Your personalized learning path
+                </span>
+              </div>
+
               <div className="text-center mb-6 md:mb-8">
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-2">
-                  What do you want to learn today?
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-foreground mb-3">
+                  What do you want to <span className="text-primary">learn today</span>?
                 </h2>
-                <p className="text-sm md:text-base text-muted-foreground">
-                  Turn PDFs, topics, or table of contents into interactive YouTube lessons, quizzes, and flashcards.
+                <p className="text-sm md:text-base text-muted-foreground max-w-lg mx-auto">
+                  Create a course from topics, PDFs, or textbooks — tailored to your career goals.
                 </p>
               </div>
 
               {/* Main Input with Inline Actions */}
-              <div className="relative flex items-center bg-background rounded-full shadow-md border border-border/50 overflow-hidden">
+              <div className="relative flex items-center bg-card rounded-full shadow-lg border border-border/50 overflow-hidden">
                 <Input
                   placeholder="I want to learn…"
                   value={courseName}
                   onChange={(e) => setCourseName(e.target.value)}
-                  className="flex-1 border-0 bg-transparent text-base md:text-lg h-12 md:h-14 px-5 md:px-6 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="flex-1 border-0 bg-transparent text-base md:text-lg h-12 md:h-14 px-5 md:px-6 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground/60"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && courseName.trim()) {
                       e.preventDefault();
@@ -244,34 +252,39 @@ const CreateCourse = () => {
                 />
                 <div className="flex items-center gap-1 md:gap-2 pr-2">
                   <button
-                    className="p-2 md:p-3 hover:bg-muted rounded-full transition-colors"
+                    className="p-2 md:p-3 hover:bg-accent rounded-full transition-colors"
                     onClick={() => {}}
                     title="Attach file"
                   >
-                    <Upload className="h-5 w-5 text-muted-foreground" />
+                    <Upload className="h-5 w-5 text-muted-foreground hover:text-primary transition-colors" />
                   </button>
                   <Button
                     onClick={handleCreateManualCourse}
                     disabled={!courseName.trim()}
-                    className="rounded-full h-9 md:h-10 px-5 md:px-6"
+                    className="rounded-full h-9 md:h-10 px-5 md:px-6 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-md"
                   >
-                    Send
+                    Create
                   </Button>
                 </div>
               </div>
+
+              {/* Trust indicator */}
+              <p className="text-center text-xs text-muted-foreground mt-4">
+                No signup needed · 100% free · Personalized for your career
+              </p>
             </div>
 
             {/* Upload Actions Card */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <button
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-all text-sm font-medium text-primary"
+                className="flex items-center gap-2.5 px-5 py-3 rounded-full border border-primary/40 bg-accent/40 hover:bg-accent hover:border-primary/60 transition-all text-sm font-medium text-primary shadow-sm"
                 onClick={() => {}}
               >
                 <Upload className="h-4 w-4" />
                 Upload PDF textbook
               </button>
               <button
-                className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-amber-500/30 bg-amber-50 hover:bg-amber-100 hover:border-amber-500/50 transition-all text-sm font-medium text-amber-700"
+                className="flex items-center gap-2.5 px-5 py-3 rounded-full border border-primary/40 bg-accent/40 hover:bg-accent hover:border-primary/60 transition-all text-sm font-medium text-primary shadow-sm"
                 onClick={() => {}}
               >
                 <Image className="h-4 w-4" />
