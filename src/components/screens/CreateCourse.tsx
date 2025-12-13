@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, GripVertical, FileText, Upload, MessageSquare, Sparkles, BookOpen, Image } from 'lucide-react';
-import PaywallModal from '@/components/PaywallModal';
+import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
 interface Topic {
@@ -17,7 +17,7 @@ interface Topic {
 }
 
 const CreateCourse = () => {
-  const [showPaywall, setShowPaywall] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
   const [showManualBuilder, setShowManualBuilder] = useState(false);
   
   // Manual course state
@@ -42,33 +42,11 @@ const CreateCourse = () => {
   const [selectedFeedbackTopics, setSelectedFeedbackTopics] = useState<string[]>([]);
 
   const addTopic = () => {
-    if (manualTopicsCreated >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-    const newTopic: Topic = {
-      id: Date.now().toString(),
-      name: '',
-      subtopics: [],
-    };
-    setTopics([...topics, newTopic]);
-    setManualTopicsCreated((prev) => prev + 1);
+    setShowWaitlist(true);
   };
 
   const addQuickTopic = () => {
-    if (!quickTopicInput.trim()) return;
-    if (manualTopicsCreated >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-    const newTopic: Topic = {
-      id: Date.now().toString(),
-      name: quickTopicInput.trim(),
-      subtopics: [],
-    };
-    setTopics([...topics, newTopic]);
-    setManualTopicsCreated((prev) => prev + 1);
-    setQuickTopicInput('');
+    setShowWaitlist(true);
   };
 
   const updateTopicName = (id: string, name: string) => {
@@ -101,89 +79,31 @@ const CreateCourse = () => {
   };
 
   const handleCreateManualCourse = () => {
-    if (manualCoursesCreated >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-    setManualCoursesCreated((prev) => prev + 1);
-    // Reset form
-    setCourseName('');
-    setCourseDescription('');
-    setTopics([]);
+    setShowWaitlist(true);
   };
 
   const handleExtractFromJD = () => {
-    if (jdUploads >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-    setJdUploads((prev) => prev + 1);
-    // Simulate AI extraction
-    setExtractedJdTopics([
-      'Strategic Planning & Business Development',
-      'P&L Management',
-      'Team Leadership & Scaling',
-      'Cross-functional Collaboration',
-      'Stakeholder Communication',
-      'Data-Driven Decision Making',
-    ]);
+    setShowWaitlist(true);
   };
 
   const handleGenerateJdCourse = () => {
-    if (selectedJdTopics.length > 3) {
-      setShowPaywall(true);
-      return;
-    }
-    // Generate course logic
+    setShowWaitlist(true);
   };
 
-  const toggleJdTopic = (topic: string) => {
-    if (selectedJdTopics.includes(topic)) {
-      setSelectedJdTopics(selectedJdTopics.filter((t) => t !== topic));
-    } else {
-      if (selectedJdTopics.length >= 3) {
-        setShowPaywall(true);
-        return;
-      }
-      setSelectedJdTopics([...selectedJdTopics, topic]);
-    }
+  const toggleJdTopic = (_topic: string) => {
+    setShowWaitlist(true);
   };
 
   const handleExtractFromFeedback = () => {
-    if (feedbackSessions >= 1) {
-      setShowPaywall(true);
-      return;
-    }
-    setFeedbackSessions((prev) => prev + 1);
-    // Simulate AI extraction
-    setExtractedFeedbackTopics([
-      'Executive Presence & Communication',
-      'Strategic Thinking',
-      'Delegation & Empowerment',
-      'Conflict Resolution',
-      'Influence Without Authority',
-      'Change Management',
-    ]);
+    setShowWaitlist(true);
   };
 
-  const toggleFeedbackTopic = (topic: string) => {
-    if (selectedFeedbackTopics.includes(topic)) {
-      setSelectedFeedbackTopics(selectedFeedbackTopics.filter((t) => t !== topic));
-    } else {
-      if (selectedFeedbackTopics.length >= 3) {
-        setShowPaywall(true);
-        return;
-      }
-      setSelectedFeedbackTopics([...selectedFeedbackTopics, topic]);
-    }
+  const toggleFeedbackTopic = (_topic: string) => {
+    setShowWaitlist(true);
   };
 
   const handleGenerateFeedbackCourse = () => {
-    if (selectedFeedbackTopics.length > 3) {
-      setShowPaywall(true);
-      return;
-    }
-    // Generate course logic
+    setShowWaitlist(true);
   };
 
   return (
@@ -602,7 +522,7 @@ const CreateCourse = () => {
 
       <Disclaimer />
 
-      <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
+      <WaitlistModal open={showWaitlist} onClose={() => setShowWaitlist(false)} />
     </div>
   );
 };

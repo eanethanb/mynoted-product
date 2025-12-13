@@ -9,38 +9,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Edit2, Plus, X, Link } from 'lucide-react';
-import PaywallModal from '@/components/PaywallModal';
+import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
 const PeerProfiles = () => {
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
-  const [editCount, setEditCount] = useState(0);
+  const [showWaitlist, setShowWaitlist] = useState(false);
   const [peerList, setPeerList] = useState(peers);
   const [newPeerUrl, setNewPeerUrl] = useState('');
-  const [removedPeer, setRemovedPeer] = useState<string | null>(null);
 
-  const handleRemovePeer = (peerId: string) => {
-    if (editCount >= 2) {
-      setShowPaywall(true);
-      return;
-    }
-    setPeerList((prev) => prev.filter((p) => p.id !== peerId));
-    setRemovedPeer(peerId);
-    setEditCount((prev) => prev + 1);
+  const handleRemovePeer = (_peerId: string) => {
+    setShowWaitlist(true);
   };
 
   const handleAddPeer = () => {
-    if (editCount >= 2) {
-      setShowPaywall(true);
-      return;
-    }
-    if (newPeerUrl.includes('linkedin.com')) {
-      // Simulate adding peer
-      setNewPeerUrl('');
-      setEditCount((prev) => prev + 1);
-      setShowEditModal(false);
-    }
+    setShowWaitlist(true);
   };
 
   return (
@@ -132,7 +115,7 @@ const PeerProfiles = () => {
 
       <Disclaimer />
 
-      <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
+      <WaitlistModal open={showWaitlist} onClose={() => setShowWaitlist(false)} />
     </div>
   );
 };

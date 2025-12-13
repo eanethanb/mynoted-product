@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import PaywallModal from '@/components/PaywallModal';
+import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
 type AccuracyType = 'accurate' | 'partial' | 'not-relevant';
@@ -35,8 +35,7 @@ interface CustomSkillGap {
 
 const SkillGapsAnalysis = () => {
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
-  const [editCount, setEditCount] = useState(0);
-  const [showPaywall, setShowPaywall] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
   
   // Custom skill gap state
   const [customGaps, setCustomGaps] = useState<CustomSkillGap[]>([]);
@@ -46,23 +45,8 @@ const SkillGapsAnalysis = () => {
   const [newGapDescription, setNewGapDescription] = useState('');
   const [newGapPriority, setNewGapPriority] = useState<'High' | 'Medium' | 'Low'>('Medium');
 
-  const handleAccuracyChange = (gapId: string, accuracy: AccuracyType) => {
-    // Check if this is a new edit (not just changing an existing selection)
-    const isNewEdit = !feedback[gapId]?.accuracy;
-    
-    if (isNewEdit && editCount >= 2) {
-      setShowPaywall(true);
-      return;
-    }
-    
-    if (isNewEdit) {
-      setEditCount((prev) => prev + 1);
-    }
-    
-    setFeedback((prev) => ({
-      ...prev,
-      [gapId]: { ...prev[gapId], accuracy, notRelevantReasons: [] },
-    }));
+  const handleAccuracyChange = (_gapId: string, _accuracy: AccuracyType) => {
+    setShowWaitlist(true);
   };
 
   const handleReasonToggle = (gapId: string, reason: string) => {
@@ -79,11 +63,7 @@ const SkillGapsAnalysis = () => {
   };
 
   const handleAddSkillGap = () => {
-    if (addGapCount >= 2) {
-      setShowPaywall(true);
-      return;
-    }
-    setShowAddGapModal(true);
+    setShowWaitlist(true);
   };
 
   const handleSaveNewGap = () => {
@@ -355,7 +335,7 @@ const SkillGapsAnalysis = () => {
         </DialogContent>
       </Dialog>
 
-      <PaywallModal open={showPaywall} onClose={() => setShowPaywall(false)} />
+      <WaitlistModal open={showWaitlist} onClose={() => setShowWaitlist(false)} />
     </div>
   );
 };
