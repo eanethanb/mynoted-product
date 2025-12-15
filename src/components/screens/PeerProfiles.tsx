@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Edit2, Plus, X, Link, Upload as UploadIcon, CheckCircle2, FileText } from 'lucide-react';
+import { Edit2, Plus, X, Link, Upload as UploadIcon, Check, FileText, PartyPopper } from 'lucide-react';
 import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
@@ -20,8 +20,6 @@ const PeerProfiles = () => {
   const [newPeerUrl, setNewPeerUrl] = useState('');
   
   // Profile upload states
-  const [hasUsedFreeUpload, setHasUsedFreeUpload] = useState(false);
-  const [showFreePreviewModal, setShowFreePreviewModal] = useState(false);
   const [showProfileWaitlistModal, setShowProfileWaitlistModal] = useState(false);
   const [profileWaitlistJoined, setProfileWaitlistJoined] = useState(false);
 
@@ -34,17 +32,7 @@ const PeerProfiles = () => {
   };
 
   const handleUploadClick = () => {
-    if (hasUsedFreeUpload) {
-      setShowProfileWaitlistModal(true);
-    } else {
-      setShowFreePreviewModal(true);
-    }
-  };
-
-  const handleContinueFreeUpload = () => {
-    setShowFreePreviewModal(false);
-    setHasUsedFreeUpload(true);
-    // Here you would trigger actual file upload logic
+    setShowProfileWaitlistModal(true);
   };
 
   const handleJoinProfileWaitlist = () => {
@@ -173,109 +161,90 @@ const PeerProfiles = () => {
         </DialogContent>
       </Dialog>
 
-      {/* One-Time Free Profile Preview Modal */}
-      <Dialog open={showFreePreviewModal} onOpenChange={setShowFreePreviewModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-primary" />
-              One-Time Free Profile Preview
-            </DialogTitle>
-            <DialogDescription className="text-left pt-2">
-              You can upload your profile once, free, to help MyNoted AI understand your skills better and refine your report.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-              <p className="text-sm font-medium text-foreground mb-3">What's included:</p>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                  <span>Upload 1 resume or LinkedIn PDF</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                  <span>Use it for 1 AI run only</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                  <span>Improves skill analysis & peer comparison</span>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground text-center">
-              Free · One-time · No payment required
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <Button onClick={handleContinueFreeUpload} className="w-full">
-                Continue (One-Time Free)
-              </Button>
-              <Button 
-                variant="ghost" 
-                onClick={() => setShowFreePreviewModal(false)}
-                className="w-full text-muted-foreground"
-              >
-                Not now
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Profile Waitlist Modal */}
       <Dialog open={showProfileWaitlistModal} onOpenChange={setShowProfileWaitlistModal}>
         <DialogContent className="sm:max-w-md">
           {!profileWaitlistJoined ? (
             <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
+              <DialogHeader className="text-center">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <DialogTitle className="text-xl font-semibold">
                   Profile-Based Analysis — Coming Soon
                 </DialogTitle>
-                <DialogDescription className="text-left pt-2">
-                  You've already used your one-time free profile upload. We're building deeper, ongoing profile-based analysis.
+                <DialogDescription className="mt-2 text-sm text-muted-foreground">
+                  We're building profile-based analysis to make your report more accurate and personalised.
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="space-y-4">
-                <p className="text-sm text-foreground">
-                  Join the waitlist to be the first to use this when it's ready.
-                </p>
+              <div className="mt-4 rounded-xl border border-border bg-accent/30 p-4">
+                <p className="text-sm font-medium text-foreground mb-3">What this will include:</p>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start gap-2.5">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <Check className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground">Upload 1 resume or LinkedIn PDF</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <Check className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground">Use it for 1 AI run only</span>
+                  </li>
+                  <li className="flex items-start gap-2.5">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <Check className="h-3 w-3 text-primary" />
+                    </div>
+                    <span className="text-sm text-foreground">Improves skill analysis & peer comparison</span>
+                  </li>
+                </ul>
+              </div>
 
-                <div className="flex flex-col gap-2">
-                  <Button onClick={handleJoinProfileWaitlist} className="w-full">
-                    Join the Waitlist
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => setShowProfileWaitlistModal(false)}
-                    className="w-full text-muted-foreground"
-                  >
-                    Not now
-                  </Button>
-                </div>
+              <p className="mt-3 text-center text-xs text-muted-foreground">
+                One-time use · No payment required
+              </p>
+
+              <div className="mt-4 flex flex-col gap-2">
+                <Button 
+                  onClick={handleJoinProfileWaitlist} 
+                  className="w-full rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
+                >
+                  Join the Waitlist
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setShowProfileWaitlistModal(false)}
+                  className="w-full text-muted-foreground hover:text-foreground"
+                >
+                  Not now
+                </Button>
               </div>
             </>
           ) : (
             <>
-              <DialogHeader>
-                <DialogTitle className="text-center">You're on the waitlist 🎉</DialogTitle>
+              <DialogHeader className="text-center">
+                <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-success/10">
+                  <PartyPopper className="h-7 w-7 text-success" />
+                </div>
+                <DialogTitle className="text-xl font-semibold">
+                  You're on the waitlist 🎉
+                </DialogTitle>
+                <DialogDescription className="mt-3 text-sm text-muted-foreground">
+                  Thanks for joining!
+                  <br />
+                  We're working on this feature and will reach out once it's ready for you to try.
+                </DialogDescription>
               </DialogHeader>
-              
-              <div className="space-y-4 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Thanks for joining! We'll reach out once profile-based analysis is ready for you to use.
-                </p>
 
+              <div className="mt-6">
                 <Button 
                   onClick={() => {
                     setShowProfileWaitlistModal(false);
                     setProfileWaitlistJoined(false);
                   }} 
-                  className="w-full"
+                  className="w-full rounded-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
                 >
                   Return to report
                 </Button>
