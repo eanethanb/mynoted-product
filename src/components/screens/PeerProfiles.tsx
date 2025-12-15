@@ -7,8 +7,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
-import { Edit2, Plus, X, Link, Upload as UploadIcon } from 'lucide-react';
+import { Edit2, Plus, X, Link, Upload as UploadIcon, CheckCircle2, FileText } from 'lucide-react';
 import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
@@ -17,6 +18,12 @@ const PeerProfiles = () => {
   const [showWaitlist, setShowWaitlist] = useState(false);
   const [peerList, setPeerList] = useState(peers);
   const [newPeerUrl, setNewPeerUrl] = useState('');
+  
+  // Profile upload states
+  const [hasUsedFreeUpload, setHasUsedFreeUpload] = useState(false);
+  const [showFreePreviewModal, setShowFreePreviewModal] = useState(false);
+  const [showProfileWaitlistModal, setShowProfileWaitlistModal] = useState(false);
+  const [profileWaitlistJoined, setProfileWaitlistJoined] = useState(false);
 
   const handleRemovePeer = (_peerId: string) => {
     setShowWaitlist(true);
@@ -24,6 +31,24 @@ const PeerProfiles = () => {
 
   const handleAddPeer = () => {
     setShowWaitlist(true);
+  };
+
+  const handleUploadClick = () => {
+    if (hasUsedFreeUpload) {
+      setShowProfileWaitlistModal(true);
+    } else {
+      setShowFreePreviewModal(true);
+    }
+  };
+
+  const handleContinueFreeUpload = () => {
+    setShowFreePreviewModal(false);
+    setHasUsedFreeUpload(true);
+    // Here you would trigger actual file upload logic
+  };
+
+  const handleJoinProfileWaitlist = () => {
+    setProfileWaitlistJoined(true);
   };
 
   return (
@@ -42,7 +67,7 @@ const PeerProfiles = () => {
           <div className="flex-1">
             <h3 className="text-sm font-medium text-foreground">Add Your Profile <span className="text-muted-foreground font-normal">(Optional)</span></h3>
             <p className="mt-1 text-xs text-muted-foreground">
-              Help MyNoted AI understand you better by adding your resume or LinkedIn profile.
+              Improve accuracy by adding your resume or LinkedIn profile.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -50,6 +75,7 @@ const PeerProfiles = () => {
               variant="outline" 
               size="sm" 
               className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
+              onClick={handleUploadClick}
             >
               <UploadIcon className="mr-2 h-3.5 w-3.5" />
               Upload Resume
@@ -58,6 +84,7 @@ const PeerProfiles = () => {
               variant="outline" 
               size="sm"
               className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
+              onClick={handleUploadClick}
             >
               <UploadIcon className="mr-2 h-3.5 w-3.5" />
               Upload LinkedIn PDF
@@ -65,7 +92,7 @@ const PeerProfiles = () => {
           </div>
         </div>
         <p className="mt-2 text-[11px] text-muted-foreground/70">
-          This improves skill analysis and peer comparison accuracy. <span className="italic">Coming soon</span>
+          This improves skill analysis and peer comparison accuracy.
         </p>
       </div>
 
@@ -143,6 +170,118 @@ const PeerProfiles = () => {
               </p>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* One-Time Free Profile Preview Modal */}
+      <Dialog open={showFreePreviewModal} onOpenChange={setShowFreePreviewModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5 text-primary" />
+              One-Time Free Profile Preview
+            </DialogTitle>
+            <DialogDescription className="text-left pt-2">
+              You can upload your profile once, free, to help MyNoted AI understand your skills better and refine your report.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
+              <p className="text-sm font-medium text-foreground mb-3">What's included:</p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                  <span>Upload 1 resume or LinkedIn PDF</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                  <span>Use it for 1 AI run only</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                  <span>Improves skill analysis & peer comparison</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Free · One-time · No payment required
+            </p>
+
+            <div className="flex flex-col gap-2">
+              <Button onClick={handleContinueFreeUpload} className="w-full">
+                Continue (One-Time Free)
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={() => setShowFreePreviewModal(false)}
+                className="w-full text-muted-foreground"
+              >
+                Not now
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Profile Waitlist Modal */}
+      <Dialog open={showProfileWaitlistModal} onOpenChange={setShowProfileWaitlistModal}>
+        <DialogContent className="sm:max-w-md">
+          {!profileWaitlistJoined ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-primary" />
+                  Profile-Based Analysis — Coming Soon
+                </DialogTitle>
+                <DialogDescription className="text-left pt-2">
+                  You've already used your one-time free profile upload. We're building deeper, ongoing profile-based analysis.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <p className="text-sm text-foreground">
+                  Join the waitlist to be the first to use this when it's ready.
+                </p>
+
+                <div className="flex flex-col gap-2">
+                  <Button onClick={handleJoinProfileWaitlist} className="w-full">
+                    Join the Waitlist
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setShowProfileWaitlistModal(false)}
+                    className="w-full text-muted-foreground"
+                  >
+                    Not now
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-center">You're on the waitlist 🎉</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Thanks for joining! We'll reach out once profile-based analysis is ready for you to use.
+                </p>
+
+                <Button 
+                  onClick={() => {
+                    setShowProfileWaitlistModal(false);
+                    setProfileWaitlistJoined(false);
+                  }} 
+                  className="w-full"
+                >
+                  Return to report
+                </Button>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 
