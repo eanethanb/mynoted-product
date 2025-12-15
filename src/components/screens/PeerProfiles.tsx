@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Edit2, Plus, X, Link, Upload } from 'lucide-react';
+import { Edit2, Plus, X, Link, Upload as UploadIcon } from 'lucide-react';
 import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
@@ -51,7 +51,7 @@ const PeerProfiles = () => {
               size="sm" 
               className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
             >
-              <Upload className="mr-2 h-3.5 w-3.5" />
+              <UploadIcon className="mr-2 h-3.5 w-3.5" />
               Upload Resume
             </Button>
             <Button 
@@ -59,7 +59,7 @@ const PeerProfiles = () => {
               size="sm"
               className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
             >
-              <Upload className="mr-2 h-3.5 w-3.5" />
+              <UploadIcon className="mr-2 h-3.5 w-3.5" />
               Upload LinkedIn PDF
             </Button>
           </div>
