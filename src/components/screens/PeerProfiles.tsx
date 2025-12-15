@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Edit2, Plus, X, Link } from 'lucide-react';
+import { Edit2, Plus, X, Link, Upload } from 'lucide-react';
 import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
 
@@ -34,6 +34,39 @@ const PeerProfiles = () => {
           <Edit2 className="mr-2 h-4 w-4" />
           Edit Peer Set
         </Button>
+      </div>
+
+      {/* Add Your Profile Block */}
+      <div className="mb-4 rounded-xl border border-primary/20 bg-gradient-to-r from-primary/5 via-accent/30 to-background p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex-1">
+            <h3 className="text-sm font-medium text-foreground">Add Your Profile <span className="text-muted-foreground font-normal">(Optional)</span></h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Help MyNoted AI understand you better by adding your resume or LinkedIn profile.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
+            >
+              <Upload className="mr-2 h-3.5 w-3.5" />
+              Upload Resume
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50"
+            >
+              <Upload className="mr-2 h-3.5 w-3.5" />
+              Upload LinkedIn PDF
+            </Button>
+          </div>
+        </div>
+        <p className="mt-2 text-[11px] text-muted-foreground/70">
+          This improves skill analysis and peer comparison accuracy. <span className="italic">Coming soon</span>
+        </p>
       </div>
 
       <div className="space-y-3">
