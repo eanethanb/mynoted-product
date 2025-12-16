@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { courses, videoResources, courseLink } from '@/data/mockData';
+import { courses, videoResources } from '@/data/mockData';
 import GapBadge from '@/components/GapBadge';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, ChevronRight, BookOpen, Clock, Sparkles, Play, Eye, ArrowLeft, ExternalLink } from 'lucide-react';
+import { ChevronDown, ChevronRight, BookOpen, Clock, Sparkles, Play, Eye, ArrowLeft } from 'lucide-react';
 import PaywallModal from '@/components/PaywallModal';
 import Disclaimer from '@/components/Disclaimer';
 
@@ -196,32 +196,8 @@ const SkillGapCourses = () => {
       <div className="mb-6 text-center md:mb-8">
         <h1 className="text-xl font-semibold text-foreground md:text-2xl">Your Skill Gap Courses</h1>
         <p className="mt-2 text-xs text-muted-foreground md:text-sm">
-          Structured learning paths for Betsy Thomas (SEO Specialist, Global Media Insight)
+          Structured learning paths with levels, outcomes, and success metrics
         </p>
-      </div>
-
-      {/* Course Link Banner */}
-      <div className="mb-4 rounded-xl border-2 border-primary bg-gradient-to-r from-primary/10 via-primary/5 to-accent/30 p-4 md:mb-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/20">
-              <BookOpen className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground md:text-base">Access Your Full Course</h3>
-              <p className="text-xs text-muted-foreground">Start your personalised learning journey now</p>
-            </div>
-          </div>
-          <Button 
-            asChild
-            className="w-full gap-2 bg-primary hover:bg-primary/90 sm:w-auto"
-          >
-            <a href={courseLink} target="_blank" rel="noopener noreferrer">
-              <ExternalLink className="h-4 w-4" />
-              Go to My Course
-            </a>
-          </Button>
-        </div>
       </div>
 
       {/* Refinement Banner */}

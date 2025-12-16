@@ -141,7 +141,7 @@ const SkillMapping = () => {
                         : 'bg-primary/80 text-primary-foreground'
                     }`}
                   >
-                    {peer.isUser ? 'Betsy' : peer.name.split(' ')[0]}
+                    {peer.isUser ? 'You' : peer.name.split(' ')[0]}
                   </div>
                 </div>
               );

@@ -94,13 +94,8 @@ const PeerProfiles = () => {
           >
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
               <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground md:text-base">
-                    {peer.name} <span className="font-normal text-muted-foreground">({peer.title}, {peer.company})</span>
-                  </h3>
-                  {peer.isUser && (
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">You</span>
-                  )}
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-foreground md:text-base">{peer.name}</h3>
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground md:text-sm">{peer.description}</p>
               </div>

@@ -26,18 +26,15 @@ const ComparativeSkillAnalysis = () => {
     setEditCount((prev) => prev + 1);
   };
 
-  const userPeer = peers.find(p => p.isUser);
-  const userName = userPeer?.name || 'Betsy Thomas';
-  
-  const strengths = skillScores.filter((s) => s.scores[userName] === 3).map((s) => s.skillCluster);
-  const developmentAreas = skillScores.filter((s) => s.scores[userName] === 1).map((s) => s.skillCluster);
+  const strengths = skillScores.filter((s) => s.scores['You'] === 3).map((s) => s.skillCluster);
+  const developmentAreas = skillScores.filter((s) => s.scores['You'] === 1).map((s) => s.skillCluster);
 
   return (
     <div className="animate-fade-in">
       <div className="mb-6 text-center md:mb-8">
         <h1 className="text-xl font-semibold text-foreground md:text-2xl">Comparative Skill Analysis</h1>
         <p className="mt-2 text-xs text-muted-foreground md:text-sm">
-          Analysis for {userName} ({userPeer?.title}, {userPeer?.company}) across 12 skill clusters (0=low, 3=strong)
+          Analysis across 10 skill clusters (0=low, 3=strong)
         </p>
       </div>
 
@@ -142,7 +139,7 @@ const ComparativeSkillAnalysis = () => {
         <div className="rounded-lg border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
-            <h3 className="font-semibold text-foreground">{userName}'s Strengths (Score 3)</h3>
+            <h3 className="font-semibold text-foreground">Your Strengths (Score 3)</h3>
           </div>
           <ul className="space-y-1.5">
             {strengths.length > 0 ? (
