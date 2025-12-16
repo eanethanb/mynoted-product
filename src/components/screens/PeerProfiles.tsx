@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { peers } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -9,19 +11,82 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { Edit2, Plus, X, Link, Upload as UploadIcon, Check, FileText, PartyPopper } from 'lucide-react';
+import { Edit2, Plus, X, Link, Upload as UploadIcon, Check, FileText, PartyPopper, Image, Trash2 } from 'lucide-react';
 import WaitlistModal from '@/components/WaitlistModal';
 import Disclaimer from '@/components/Disclaimer';
+
+interface PeerEntry {
+  url: string;
+  context: string;
+  image: File | null;
+  imagePreview: string | null;
+}
+
+const createEmptyPeerEntry = (): PeerEntry => ({
+  url: '',
+  context: '',
+  image: null,
+  imagePreview: null,
+});
 
 const PeerProfiles = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
   const [peerList, setPeerList] = useState(peers);
-  const [newPeerUrl, setNewPeerUrl] = useState('');
+  const [peerEntries, setPeerEntries] = useState<PeerEntry[]>([createEmptyPeerEntry()]);
+  const fileInputRefs = useRef<(HTMLInputElement | null)[]>([]);
   
   // Profile upload states
   const [showProfileWaitlistModal, setShowProfileWaitlistModal] = useState(false);
   const [profileWaitlistJoined, setProfileWaitlistJoined] = useState(false);
+
+  const updatePeerEntry = (index: number, field: keyof PeerEntry, value: string | File | null) => {
+    setPeerEntries(prev => prev.map((entry, i) => {
+      if (i !== index) return entry;
+      if (field === 'image') {
+        const file = value as File | null;
+        return {
+          ...entry,
+          image: file,
+          imagePreview: file ? URL.createObjectURL(file) : null,
+        };
+      }
+      return { ...entry, [field]: value };
+    }));
+  };
+
+  const handleImageUpload = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image must be less than 5MB');
+        return;
+      }
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        alert('Only JPG and PNG formats are accepted');
+        return;
+      }
+      updatePeerEntry(index, 'image', file);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    updatePeerEntry(index, 'image', null);
+  };
+
+  const addAnotherPeer = () => {
+    setPeerEntries(prev => [...prev, createEmptyPeerEntry()]);
+  };
+
+  const removePeerEntry = (index: number) => {
+    if (peerEntries.length > 1) {
+      setPeerEntries(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const resetPeerEntries = () => {
+    setPeerEntries([createEmptyPeerEntry()]);
+  };
 
   const handleRemovePeer = (_peerId: string) => {
     setShowWaitlist(true);
@@ -109,8 +174,11 @@ const PeerProfiles = () => {
       </div>
 
       {/* Edit Peer Set Modal */}
-      <Dialog open={showEditModal} onOpenChange={setShowEditModal}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog open={showEditModal} onOpenChange={(open) => {
+        setShowEditModal(open);
+        if (!open) resetPeerEntries();
+      }}>
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Edit Peer Set</DialogTitle>
           </DialogHeader>
@@ -138,19 +206,114 @@ const PeerProfiles = () => {
             </div>
 
             <div>
-              <h4 className="mb-2 text-sm font-medium text-foreground">Add New Peer</h4>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Link className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Paste LinkedIn URL"
-                    value={newPeerUrl}
-                    onChange={(e) => setNewPeerUrl(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-                <Button onClick={handleAddPeer} size="sm">
-                  <Plus className="h-4 w-4" />
+              <h4 className="mb-3 text-sm font-medium text-foreground">Add New Peer</h4>
+              <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+                {peerEntries.map((entry, index) => (
+                  <div key={index} className="rounded-lg border border-border bg-muted/20 p-3 space-y-3">
+                    {peerEntries.length > 1 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">Peer {index + 1}</span>
+                        <button
+                          onClick={() => removePeerEntry(index)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )}
+                    
+                    {/* URL Input */}
+                    <div className="relative">
+                      <Link className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="Paste LinkedIn URL"
+                        value={entry.url}
+                        onChange={(e) => updatePeerEntry(index, 'url', e.target.value)}
+                        className="pl-9"
+                      />
+                    </div>
+
+                    {/* Peer Context */}
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">
+                        Peer Context <span className="font-normal">(Optional)</span>
+                      </Label>
+                      <Textarea
+                        placeholder="Paste copied text from your peer's LinkedIn profile, or add brief notes about their role or experience..."
+                        value={entry.context}
+                        onChange={(e) => updatePeerEntry(index, 'context', e.target.value.slice(0, 1000))}
+                        className="min-h-[80px] text-sm resize-none"
+                        maxLength={1000}
+                      />
+                      <p className="text-[10px] text-muted-foreground/70">
+                        Paste copied text from your peer's LinkedIn profile, or upload one screenshot of their profile. You may also add brief notes about their role or experience to improve accuracy.
+                      </p>
+                      <p className="text-[10px] text-muted-foreground/50 text-right">
+                        {entry.context.length}/1,000
+                      </p>
+                    </div>
+
+                    {/* Image Upload */}
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-medium text-muted-foreground">
+                        Profile Screenshot <span className="font-normal">(Optional)</span>
+                      </Label>
+                      {entry.imagePreview ? (
+                        <div className="relative rounded-md border border-border bg-background p-2">
+                          <div className="flex items-center gap-2">
+                            <img 
+                              src={entry.imagePreview} 
+                              alt="Preview" 
+                              className="h-12 w-12 rounded object-cover"
+                            />
+                            <span className="text-xs text-foreground truncate flex-1">
+                              {entry.image?.name}
+                            </span>
+                            <button
+                              onClick={() => removeImage(index)}
+                              className="text-muted-foreground hover:text-destructive"
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => fileInputRefs.current[index]?.click()}
+                          className="w-full rounded-md border border-dashed border-border bg-background px-3 py-3 text-xs text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors"
+                        >
+                          <Image className="h-4 w-4 mx-auto mb-1" />
+                          Upload LinkedIn profile screenshot
+                        </button>
+                      )}
+                      <input
+                        ref={(el) => { fileInputRefs.current[index] = el; }}
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        onChange={(e) => handleImageUpload(index, e)}
+                        className="hidden"
+                      />
+                      <p className="text-[10px] text-muted-foreground/70">
+                        Upload one LinkedIn profile screenshot (optional) · JPG, PNG · Max 5MB
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add Another Peer */}
+              <button
+                onClick={addAnotherPeer}
+                className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add another peer
+              </button>
+
+              <div className="mt-4 flex gap-2">
+                <Button onClick={handleAddPeer} className="flex-1">
+                  Add Peer{peerEntries.length > 1 ? 's' : ''}
                 </Button>
               </div>
               <p className="mt-1.5 text-xs text-muted-foreground">
