@@ -178,11 +178,14 @@ const PeerProfiles = () => {
         setShowEditModal(open);
         if (!open) resetPeerEntries();
       }}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
+        <DialogContent className="w-[100vw] max-w-[100vw] sm:w-[92vw] sm:max-w-[560px] md:max-w-[600px] p-0 gap-0 max-h-[90vh] flex flex-col">
+          {/* Sticky Header */}
+          <DialogHeader className="px-4 py-4 sm:px-6 border-b border-border shrink-0">
             <DialogTitle>Edit Peer Set</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 space-y-4">
             <div>
               <h4 className="mb-2 text-sm font-medium text-foreground">Current Peers</h4>
               <div className="space-y-2">
@@ -193,10 +196,10 @@ const PeerProfiles = () => {
                       key={peer.id}
                       className="flex items-center justify-between rounded-md border border-border bg-muted/30 px-3 py-2"
                     >
-                      <span className="text-sm text-foreground">{peer.name}</span>
+                      <span className="text-sm text-foreground truncate mr-2">{peer.name}</span>
                       <button
                         onClick={() => handleRemovePeer(peer.id)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-muted-foreground hover:text-destructive shrink-0"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -207,9 +210,9 @@ const PeerProfiles = () => {
 
             <div>
               <h4 className="mb-3 text-sm font-medium text-foreground">Add New Peer</h4>
-              <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-1">
+              <div className="space-y-4">
                 {peerEntries.map((entry, index) => (
-                  <div key={index} className="rounded-lg border border-border bg-muted/20 p-3 space-y-3">
+                  <div key={index} className="rounded-lg border border-border bg-muted/20 p-3 sm:p-4 space-y-3">
                     {peerEntries.length > 1 && (
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-muted-foreground">Peer {index + 1}</span>
@@ -229,7 +232,7 @@ const PeerProfiles = () => {
                         placeholder="Paste LinkedIn URL"
                         value={entry.url}
                         onChange={(e) => updatePeerEntry(index, 'url', e.target.value)}
-                        className="pl-9"
+                        className="pl-9 w-full"
                       />
                     </div>
 
@@ -242,15 +245,18 @@ const PeerProfiles = () => {
                         placeholder="Paste copied text from your peer's LinkedIn profile, or add brief notes about their role or experience..."
                         value={entry.context}
                         onChange={(e) => updatePeerEntry(index, 'context', e.target.value.slice(0, 1000))}
-                        className="min-h-[80px] text-sm resize-none"
+                        className="min-h-[72px] sm:min-h-[80px] text-sm resize-y w-full"
                         maxLength={1000}
+                        rows={3}
                       />
-                      <p className="text-[10px] text-muted-foreground/70">
-                        Paste copied text from your peer's LinkedIn profile, or upload one screenshot of their profile. You may also add brief notes about their role or experience to improve accuracy.
-                      </p>
-                      <p className="text-[10px] text-muted-foreground/50 text-right">
-                        {entry.context.length}/1,000
-                      </p>
+                      <div className="flex flex-col gap-0.5">
+                        <p className="text-[10px] text-muted-foreground/70 leading-relaxed">
+                          Paste copied text from your peer's LinkedIn profile, or upload one screenshot of their profile. You may also add brief notes about their role or experience to improve accuracy.
+                        </p>
+                        <p className="text-[10px] text-muted-foreground/50 text-right">
+                          {entry.context.length}/1,000
+                        </p>
+                      </div>
                     </div>
 
                     {/* Image Upload */}
@@ -259,19 +265,19 @@ const PeerProfiles = () => {
                         Profile Screenshot <span className="font-normal">(Optional)</span>
                       </Label>
                       {entry.imagePreview ? (
-                        <div className="relative rounded-md border border-border bg-background p-2">
+                        <div className="relative rounded-md border border-border bg-background p-2 w-full">
                           <div className="flex items-center gap-2">
                             <img 
                               src={entry.imagePreview} 
                               alt="Preview" 
-                              className="h-12 w-12 rounded object-cover"
+                              className="h-10 w-10 sm:h-12 sm:w-12 rounded object-cover shrink-0"
                             />
-                            <span className="text-xs text-foreground truncate flex-1">
+                            <span className="text-xs text-foreground truncate flex-1 min-w-0">
                               {entry.image?.name}
                             </span>
                             <button
                               onClick={() => removeImage(index)}
-                              className="text-muted-foreground hover:text-destructive"
+                              className="text-muted-foreground hover:text-destructive shrink-0"
                             >
                               <X className="h-4 w-4" />
                             </button>
@@ -281,10 +287,10 @@ const PeerProfiles = () => {
                         <button
                           type="button"
                           onClick={() => fileInputRefs.current[index]?.click()}
-                          className="w-full rounded-md border border-dashed border-border bg-background px-3 py-3 text-xs text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors"
+                          className="w-full rounded-md border border-dashed border-border bg-background px-3 py-3 text-xs text-muted-foreground hover:border-primary/50 hover:bg-accent/30 transition-colors text-center"
                         >
                           <Image className="h-4 w-4 mx-auto mb-1" />
-                          Upload LinkedIn profile screenshot
+                          <span className="block">Upload LinkedIn profile screenshot</span>
                         </button>
                       )}
                       <input
@@ -305,21 +311,22 @@ const PeerProfiles = () => {
               {/* Add Another Peer */}
               <button
                 onClick={addAnotherPeer}
-                className="mt-3 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                className="mt-3 mb-4 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add another peer
               </button>
-
-              <div className="mt-4 flex gap-2">
-                <Button onClick={handleAddPeer} className="flex-1">
-                  Add Peer{peerEntries.length > 1 ? 's' : ''}
-                </Button>
-              </div>
-              <p className="mt-1.5 text-xs text-muted-foreground">
-                Free tier: 2 peer edits. Upgrade for unlimited edits.
-              </p>
             </div>
+          </div>
+
+          {/* Sticky Footer */}
+          <div className="px-4 py-4 sm:px-6 border-t border-border bg-background shrink-0">
+            <Button onClick={handleAddPeer} className="w-full">
+              Add Peer{peerEntries.length > 1 ? 's' : ''}
+            </Button>
+            <p className="mt-2 text-xs text-muted-foreground text-center">
+              Free tier: 2 peer edits. Upgrade for unlimited edits.
+            </p>
           </div>
         </DialogContent>
       </Dialog>
