@@ -1,13 +1,16 @@
-import { competitiveAdvantages, developmentOpportunities } from '@/data/mockData';
+import { competitiveAdvantages, developmentOpportunities, peers } from '@/data/mockData';
 import { CheckCircle, AlertTriangle } from 'lucide-react';
 
 const SwotAnalysis = () => {
+  const userPeer = peers.find(p => p.isUser);
+  const userName = userPeer?.name || 'Betsy Thomas';
+  
   return (
     <div className="animate-fade-in">
       <div className="mb-8 text-center">
         <h1 className="text-2xl font-semibold text-foreground">SWOT vis-à-vis Peers</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Strengths and development areas compared to fintech leadership cohort
+          Strengths and development areas for {userName} ({userPeer?.title}, {userPeer?.company}) compared to SEO leadership cohort
         </p>
       </div>
 
@@ -59,16 +62,16 @@ const SwotAnalysis = () => {
       <div className="mt-8 rounded-lg border border-border bg-card p-6">
         <h3 className="mb-3 text-lg font-semibold text-foreground">Strategic Position Summary</h3>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Your profile represents a{' '}
-          <span className="font-medium text-primary">world-class operational leader</span> with
-          exceptional P&L management and process excellence capabilities. To achieve elite COO
-          positioning in modern retail, the path forward requires strengthening{' '}
-          <span className="font-medium text-success">customer experience depth</span>,{' '}
-          <span className="font-medium text-success">digital transformation capabilities</span>, and{' '}
-          <span className="font-medium text-success">partnership management fluency</span> — all
-          achievable through focused 6-12 month development initiatives. With these enhancements,
-          you would establish yourself in the top tier of retail COOs, combining operational mastery
-          with customer-centric and technology-forward leadership.
+          {userName} ({userPeer?.title}, {userPeer?.company}) has strong foundational skills but lacks critical expertise in several areas. 
+          Key gaps include{' '}
+          <span className="font-medium text-warning">SEO strategy development</span>,{' '}
+          <span className="font-medium text-warning">digital marketing</span>, and{' '}
+          <span className="font-medium text-warning">performance incentives</span>. 
+          These gaps are significant compared to competitors who possess advanced skills in these areas. 
+          To address these gaps, {userName} should prioritize upskilling in SEO strategy development and digital marketing, 
+          including digital marketing strategy and Google Analytics. 
+          Focusing on these top skills will provide the best return on investment and enhance ability to drive 
+          successful campaigns and improve team performance.
         </p>
       </div>
     </div>
