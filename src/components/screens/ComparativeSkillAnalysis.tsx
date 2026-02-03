@@ -123,10 +123,6 @@ const ComparativeSkillAnalysis = () => {
     setEditCount((prev) => prev + 1);
   };
 
-<<<<<<< HEAD
-  const strengths = skillScores.filter((s) => s.scores['You'] === 3).map((s) => s.skillCluster);
-  const developmentAreas = skillScores.filter((s) => s.scores['You'] === 1).map((s) => s.skillCluster);
-=======
   // strengths & development areas based on user row
   const strengths = useMemo(
     () =>
@@ -143,7 +139,7 @@ const ComparativeSkillAnalysis = () => {
         .map((s) => s.skillCluster),
     [skillScoreList, userName],
   );
->>>>>>> e35c98d (your message here)
+
 
   return (
     <div className="animate-fade-in">
@@ -152,9 +148,6 @@ const ComparativeSkillAnalysis = () => {
           Comparative Skill Analysis
         </h1>
         <p className="mt-2 text-xs text-muted-foreground md:text-sm">
-<<<<<<< HEAD
-          Analysis across 10 skill clusters (0=low, 3=strong)
-=======
           Analysis for {userName}
           {userPeer?.title || userPeer?.company ? (
             <>
@@ -166,7 +159,6 @@ const ComparativeSkillAnalysis = () => {
           ) : null}
           {" "}
           across {skillScoreList.length} skill clusters (0 = low, 3 = strong)
->>>>>>> e35c98d (your message here)
         </p>
       </div>
 
@@ -286,13 +278,10 @@ const ComparativeSkillAnalysis = () => {
         <div className="rounded-lg border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
-<<<<<<< HEAD
-            <h3 className="font-semibold text-foreground">Your Strengths (Score 3)</h3>
-=======
+
             <h3 className="font-semibold text-foreground">
               {userName}&apos;s Strengths (Score 3)
             </h3>
->>>>>>> e35c98d (your message here)
           </div>
           <ul className="space-y-1.5">
             {strengths.length > 0 ? (
