@@ -114,7 +114,7 @@ export const axisOptions = {
   ],
 };
 
-// Used by SkillGapCourses (even if you haven't opened it yet)
+// Used by SkillGapCourses
 export const courses = [
   {
     id: "course-1",
@@ -124,6 +124,21 @@ export const courses = [
     description:
       "Learn how to convert operational performance into a clear board narrative.",
     url: "https://example.com/board-storytelling",
+    duration: "4h 30m",
+    levels: 3,
+    gapScore: 3,
+    chapters: [
+      {
+        id: "ch-1-1",
+        title: "Foundations of Board Communication",
+        lessons: ["Board Meeting Anatomy", "Stakeholder Mapping", "Narrative vs Data"],
+      },
+      {
+        id: "ch-1-2",
+        title: "Building Your Board Deck",
+        lessons: ["Slide Structure", "Metrics That Matter", "The Ask"],
+      },
+    ],
   },
   {
     id: "course-2",
@@ -133,6 +148,21 @@ export const courses = [
     description:
       "Design a scorecard and weekly review rhythm for your business.",
     url: "https://example.com/operating-system",
+    duration: "3h 15m",
+    levels: 2,
+    gapScore: 2,
+    chapters: [
+      {
+        id: "ch-2-1",
+        title: "Designing Your Scorecard",
+        lessons: ["Choosing Core Metrics", "Red/Yellow/Green Framework"],
+      },
+      {
+        id: "ch-2-2",
+        title: "Running the Weekly Review",
+        lessons: ["Agenda Design", "Action Tracking", "Continuous Improvement"],
+      },
+    ],
   },
 ];
 
@@ -143,6 +173,7 @@ export const videoResources = [
     platform: "YouTube",
     url: "https://youtube.com/watch?v=dummy1",
     duration: "18:32",
+    views: "12.4K",
   },
   {
     id: "vid-2",
@@ -150,6 +181,7 @@ export const videoResources = [
     platform: "YouTube",
     url: "https://youtube.com/watch?v=dummy2",
     duration: "22:10",
+    views: "8.1K",
   },
 ];
 
@@ -158,6 +190,59 @@ export const courseLink = {
   label: "View more curated courses",
   url: "https://example.com/all-courses",
 };
+
+// Used by PaidFeatures
+export const experienceSignals = [
+  "Led P&L > $50M",
+  "Board presentation experience",
+  "M&A integration",
+  "International expansion",
+  "IPO preparation",
+  "Team scaling (50+ reports)",
+  "Digital transformation",
+  "Fundraising support",
+];
+
+export const goalChips = [
+  "CEO track",
+  "Board seat",
+  "Advisory roles",
+  "Startup COO",
+  "Enterprise COO",
+  "Consulting pivot",
+  "Portfolio operator",
+];
+
+// Used by SwotAnalysis
+export const competitiveAdvantages = [
+  {
+    title: "Operational Excellence",
+    description: "Deep expertise in P&L management, process optimization, and scaling operations across multiple business units.",
+  },
+  {
+    title: "People Leadership",
+    description: "Proven ability to build, mentor, and retain high-performing teams in fast-paced environments.",
+  },
+  {
+    title: "Strategic Execution",
+    description: "Track record of translating board-level strategy into measurable operational outcomes.",
+  },
+];
+
+export const developmentOpportunities = [
+  {
+    title: "Customer Experience Depth",
+    description: "Limited direct CX ownership; opportunity to deepen customer journey mapping and NPS-driven initiatives.",
+  },
+  {
+    title: "Digital Transformation",
+    description: "Emerging capability in AI/automation; focused upskilling would accelerate modernization efforts.",
+  },
+  {
+    title: "Partnership & Ecosystem Management",
+    description: "Room to build fluency in strategic partnerships, vendor ecosystems, and co-development models.",
+  },
+];
 
 // ---------------------- DB API LOADER ----------------------
 
