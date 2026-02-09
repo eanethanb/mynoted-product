@@ -69,6 +69,18 @@ const PeerProfiles = () => {
   const [peerList, setPeerList] = useState<any[]>(fallbackPeers);
   const [newPeerUrl, setNewPeerUrl] = useState("");
 
+  // Peer entries for the add-peer form
+  const [peerEntries, setPeerEntries] = useState<PeerEntry[]>([createEmptyPeerEntry()]);
+
+  const addAnotherPeer = () => {
+    setPeerEntries((prev) => [...prev, createEmptyPeerEntry()]);
+  };
+
+  const resetPeerEntries = () => {
+    setPeerEntries([createEmptyPeerEntry()]);
+    setNewPeerUrl("");
+  };
+
   // Profile upload waitlist
   const [showProfileWaitlistModal, setShowProfileWaitlistModal] = useState(false);
   const [profileWaitlistJoined, setProfileWaitlistJoined] = useState(false);
