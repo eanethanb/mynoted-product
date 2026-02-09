@@ -1,8 +1,12 @@
-/* src/index.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
 
 /* MyNoted AI Design System - Poppins + #77AAE7 primary */
 
@@ -120,17 +124,19 @@
     --sidebar-border: 217 33% 17%;
     --sidebar-ring: 211 64% 69%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
 
   html {
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 }

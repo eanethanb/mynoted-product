@@ -1,96 +1,49 @@
-import { useEffect, useMemo, useState } from "react";
-import { skillGaps as fallbackSkillGaps, getMockReport } from "@/data/mockData";
-import GapBadge from "@/components/GapBadge";
-import { ChevronRight, Check, AlertTriangle, X, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import WaitlistModal from "@/components/WaitlistModal";
-import Disclaimer from "@/components/Disclaimer";
+import { useState } from 'react';
+import { skillGaps } from '@/data/mockData';
+import GapBadge from '@/components/GapBadge';
+import { ChevronRight, Check, AlertTriangle, X, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import WaitlistModal from '@/components/WaitlistModal';
+import Disclaimer from '@/components/Disclaimer';
 
-type AccuracyType = "accurate" | "partial" | "not-relevant";
+type AccuracyType = 'accurate' | 'partial' | 'not-relevant';
 
 interface GapFeedback {
   accuracy: AccuracyType | null;
   notRelevantReasons: string[];
 }
 
-const notRelevantOptions = ["Already strong", "Not needed for my role", "Low priority now"];
+const notRelevantOptions = [
+  'Already strong',
+  'Not needed for my role',
+  'Low priority now',
+];
 
 interface CustomSkillGap {
   id: string;
   title: string;
   description: string;
-  priority: "High" | "Medium" | "Low";
-}
-
-// ✅ Try multiple likely paths so DB JSON can evolve without breaking UI
-function extractSkillGapsFromPayload(payload: any) {
-  const candidates = [
-    payload?.skillGaps,
-    payload?.sections?.skillGaps,
-    payload?.sections?.skill_gaps,
-    payload?.sections?.gaps,
-    payload?.gaps,
-  ];
-
-  const found = candidates.find((x) => Array.isArray(x));
-  return found ?? null;
+  priority: 'High' | 'Medium' | 'Low';
 }
 
 const SkillGapsAnalysis = () => {
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
   const [showWaitlist, setShowWaitlist] = useState(false);
-
-  // ✅ Start with fallback so UI never breaks
-  const [skillGapsList, setSkillGapsList] = useState<any[]>(fallbackSkillGaps);
-
+  
   // Custom skill gap state
   const [customGaps, setCustomGaps] = useState<CustomSkillGap[]>([]);
   const [addGapCount, setAddGapCount] = useState(0);
   const [showAddGapModal, setShowAddGapModal] = useState(false);
-  const [newGapTitle, setNewGapTitle] = useState("");
-  const [newGapDescription, setNewGapDescription] = useState("");
-  const [newGapPriority, setNewGapPriority] = useState<"High" | "Medium" | "Low">("Medium");
-
-  // ✅ Load DB once and override gaps if present
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const payload = await getMockReport();
-        const gapsFromDb = extractSkillGapsFromPayload(payload);
-
-        if (!cancelled && Array.isArray(gapsFromDb) && gapsFromDb.length > 0) {
-          setSkillGapsList(gapsFromDb);
-        }
-      } catch (e) {
-        console.error("SkillGapsAnalysis DB load failed, using fallback mock skillGaps:", e);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const [newGapTitle, setNewGapTitle] = useState('');
+  const [newGapDescription, setNewGapDescription] = useState('');
+  const [newGapPriority, setNewGapPriority] = useState<'High' | 'Medium' | 'Low'>('Medium');
 
   const handleAccuracyChange = (_gapId: string, _accuracy: AccuracyType) => {
     setShowWaitlist(true);
@@ -102,7 +55,6 @@ const SkillGapsAnalysis = () => {
       const updated = current.includes(reason)
         ? current.filter((r) => r !== reason)
         : [...current, reason];
-
       return {
         ...prev,
         [gapId]: { ...prev[gapId], notRelevantReasons: updated },
@@ -111,43 +63,37 @@ const SkillGapsAnalysis = () => {
   };
 
   const handleAddSkillGap = () => {
-    // right now still waitlist; later we’ll open modal and persist to DB
     setShowWaitlist(true);
-    // If you want to enable local add immediately instead, use:
-    // setShowAddGapModal(true);
   };
 
   const handleSaveNewGap = () => {
     if (!newGapTitle.trim()) return;
-
+    
     const newGap: CustomSkillGap = {
       id: `custom-${Date.now()}`,
       title: newGapTitle,
       description: newGapDescription,
       priority: newGapPriority,
     };
-
-    setCustomGaps((prev) => [...prev, newGap]);
+    
+    setCustomGaps([...customGaps, newGap]);
     setAddGapCount((prev) => prev + 1);
     setShowAddGapModal(false);
-    setNewGapTitle("");
-    setNewGapDescription("");
-    setNewGapPriority("Medium");
+    setNewGapTitle('');
+    setNewGapDescription('');
+    setNewGapPriority('Medium');
   };
 
-  const getPriorityColor = (priority: "High" | "Medium" | "Low") => {
+  const getPriorityColor = (priority: 'High' | 'Medium' | 'Low') => {
     switch (priority) {
-      case "High":
-        return "bg-destructive/10 text-destructive border-destructive/20";
-      case "Medium":
-        return "bg-warning/10 text-warning border-warning/20";
-      case "Low":
-        return "bg-success/10 text-success border-success/20";
+      case 'High':
+        return 'bg-destructive/10 text-destructive border-destructive/20';
+      case 'Medium':
+        return 'bg-warning/10 text-warning border-warning/20';
+      case 'Low':
+        return 'bg-success/10 text-success border-success/20';
     }
   };
-
-  // ✅ Optional: count top 3 from list if present, otherwise just show banner text
-  const top3 = useMemo(() => skillGapsList?.slice?.(0, 3) ?? [], [skillGapsList]);
 
   return (
     <div className="animate-fade-in">
@@ -168,23 +114,15 @@ const SkillGapsAnalysis = () => {
             <div>
               <h3 className="text-sm font-semibold text-foreground md:text-base">Top 3 Priority Gaps</h3>
               <p className="mt-1 text-xs text-muted-foreground md:text-sm">
-                Critical for role excellence and advancement. These represent the most significant
-                development opportunities.
+                Critical for COO role excellence and advancement. These three gaps represent the most significant development opportunities.
               </p>
-              {top3.length > 0 && (
-                <p className="mt-2 text-[11px] text-muted-foreground">
-                  {top3.map((g: any) => g.title).join(" • ")}
-                </p>
-              )}
             </div>
           </div>
-
           <Button onClick={handleAddSkillGap} className="gap-2 whitespace-nowrap w-full sm:w-auto" size="sm">
             <Plus className="h-4 w-4" />
             Add Skill Gap
           </Button>
         </div>
-
         <p className="mt-3 text-[10px] text-muted-foreground md:text-xs">
           Free: Add + prioritise up to 2 skill gaps. ({2 - addGapCount} remaining)
         </p>
@@ -204,11 +142,7 @@ const SkillGapsAnalysis = () => {
                   <h3 className="text-base font-semibold text-foreground md:text-lg">{gap.title}</h3>
                   <p className="mt-1 text-xs text-muted-foreground md:text-sm">{gap.description}</p>
                 </div>
-                <span
-                  className={`self-start rounded-full border px-2 py-0.5 text-[10px] font-medium md:px-3 md:py-1 md:text-xs ${getPriorityColor(
-                    gap.priority
-                  )}`}
-                >
+                <span className={`self-start rounded-full border px-2 py-0.5 text-[10px] font-medium md:px-3 md:py-1 md:text-xs ${getPriorityColor(gap.priority)}`}>
                   {gap.priority} Priority
                 </span>
               </div>
@@ -219,7 +153,7 @@ const SkillGapsAnalysis = () => {
 
       {/* Skill Gap Cards */}
       <div className="space-y-3 md:space-y-4">
-        {skillGapsList.map((gap: any) => (
+        {skillGaps.map((gap) => (
           <div
             key={gap.id}
             className="rounded-lg border border-border bg-card p-3 transition-shadow hover:shadow-sm md:p-5"
@@ -233,11 +167,7 @@ const SkillGapsAnalysis = () => {
             </div>
 
             <div className="mt-3 md:mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 bg-primary text-primary-foreground hover:bg-primary-dark text-xs md:text-sm"
-              >
+              <Button variant="outline" size="sm" className="gap-2 bg-primary text-primary-foreground hover:bg-primary-dark text-xs md:text-sm">
                 {gap.category}
                 <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
               </Button>
@@ -246,7 +176,7 @@ const SkillGapsAnalysis = () => {
             <div className="mt-3 md:mt-4">
               <h4 className="text-xs font-medium text-foreground md:text-sm">ACTION ITEMS:</h4>
               <ul className="mt-1.5 space-y-1 md:mt-2 md:space-y-1.5">
-                {(gap.actionItems || []).map((item: string, index: number) => (
+                {gap.actionItems.map((item, index) => (
                   <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground md:text-sm">
                     <span className="mt-0.5 text-primary">→</span>
                     {item}
@@ -257,32 +187,40 @@ const SkillGapsAnalysis = () => {
 
             {/* Accuracy Assessment */}
             <div className="mt-5 border-t border-border pt-4">
-              <p className="mb-3 text-sm font-medium text-foreground">How accurate is this assessment?</p>
-
+              <p className="mb-3 text-sm font-medium text-foreground">
+                How accurate is this assessment?
+              </p>
               <RadioGroup
-                value={feedback[gap.id]?.accuracy || ""}
+                value={feedback[gap.id]?.accuracy || ''}
                 onValueChange={(value) => handleAccuracyChange(gap.id, value as AccuracyType)}
                 className="flex flex-wrap gap-4"
               >
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="accurate" id={`${gap.id}-accurate`} />
-                  <Label htmlFor={`${gap.id}-accurate`} className="flex cursor-pointer items-center gap-1.5 text-sm">
+                  <Label
+                    htmlFor={`${gap.id}-accurate`}
+                    className="flex cursor-pointer items-center gap-1.5 text-sm"
+                  >
                     <Check className="h-4 w-4 text-success" />
                     Accurate
                   </Label>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="partial" id={`${gap.id}-partial`} />
-                  <Label htmlFor={`${gap.id}-partial`} className="flex cursor-pointer items-center gap-1.5 text-sm">
+                  <Label
+                    htmlFor={`${gap.id}-partial`}
+                    className="flex cursor-pointer items-center gap-1.5 text-sm"
+                  >
                     <AlertTriangle className="h-4 w-4 text-warning" />
                     Partially accurate
                   </Label>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <RadioGroupItem value="not-relevant" id={`${gap.id}-not-relevant`} />
-                  <Label htmlFor={`${gap.id}-not-relevant`} className="flex cursor-pointer items-center gap-1.5 text-sm">
+                  <Label
+                    htmlFor={`${gap.id}-not-relevant`}
+                    className="flex cursor-pointer items-center gap-1.5 text-sm"
+                  >
                     <X className="h-4 w-4 text-destructive" />
                     Not relevant
                   </Label>
@@ -290,9 +228,11 @@ const SkillGapsAnalysis = () => {
               </RadioGroup>
 
               {/* Not Relevant Reasons */}
-              {feedback[gap.id]?.accuracy === "not-relevant" && (
+              {feedback[gap.id]?.accuracy === 'not-relevant' && (
                 <div className="mt-3 rounded-md bg-muted/50 p-3">
-                  <p className="mb-2 text-xs font-medium text-muted-foreground">Tell us why this isn't relevant:</p>
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">
+                    Tell us why this isn't relevant:
+                  </p>
                   <div className="space-y-2">
                     {notRelevantOptions.map((option) => (
                       <div key={option} className="flex items-center gap-2">
@@ -301,7 +241,10 @@ const SkillGapsAnalysis = () => {
                           checked={feedback[gap.id]?.notRelevantReasons?.includes(option)}
                           onCheckedChange={() => handleReasonToggle(gap.id, option)}
                         />
-                        <Label htmlFor={`${gap.id}-${option}`} className="cursor-pointer text-sm text-muted-foreground">
+                        <Label
+                          htmlFor={`${gap.id}-${option}`}
+                          className="cursor-pointer text-sm text-muted-foreground"
+                        >
                           {option}
                         </Label>
                       </div>
@@ -316,29 +259,24 @@ const SkillGapsAnalysis = () => {
 
       {/* Timeline */}
       <div className="mt-6 md:mt-8">
-        <h3 className="mb-3 text-base font-semibold text-foreground md:mb-4 md:text-lg">
-          Expected Timeline & Impact
-        </h3>
-
+        <h3 className="mb-3 text-base font-semibold text-foreground md:mb-4 md:text-lg">Expected Timeline & Impact</h3>
         <div className="grid gap-3 md:gap-4 md:grid-cols-3">
           <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
             <div className="text-xl font-bold text-primary md:text-2xl">90 Days</div>
             <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
-              Early progress and quick wins from addressing priority gaps.
+              Insurance pilot launched, first PRD shipped, investor deck v1.0
             </p>
           </div>
-
           <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
             <div className="text-xl font-bold text-success md:text-2xl">180 Days</div>
             <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
-              Stronger role performance and measurable lift in the weakest areas.
+              Insurance score +1.5, product ownership proven, board materials standardized
             </p>
           </div>
-
           <div className="rounded-lg border border-border bg-card p-3 text-center md:p-5">
             <div className="text-xl font-bold text-destructive md:text-2xl">12 Months</div>
             <p className="mt-1.5 text-xs text-muted-foreground md:mt-2 md:text-sm">
-              Consolidated leadership profile and readiness for higher scale.
+              Complete COO profile, quadrant position (6, 9), ready for larger scale role
             </p>
           </div>
         </div>
@@ -352,7 +290,6 @@ const SkillGapsAnalysis = () => {
           <DialogHeader>
             <DialogTitle>Add New Skill Gap</DialogTitle>
           </DialogHeader>
-
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="gapTitle">Skill Gap Title</Label>
@@ -363,7 +300,6 @@ const SkillGapsAnalysis = () => {
                 onChange={(e) => setNewGapTitle(e.target.value)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="gapDescription">Description</Label>
               <Textarea
@@ -374,13 +310,9 @@ const SkillGapsAnalysis = () => {
                 rows={3}
               />
             </div>
-
             <div className="space-y-2">
               <Label>Priority Level</Label>
-              <Select
-                value={newGapPriority}
-                onValueChange={(v) => setNewGapPriority(v as "High" | "Medium" | "Low")}
-              >
+              <Select value={newGapPriority} onValueChange={(v) => setNewGapPriority(v as 'High' | 'Medium' | 'Low')}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -392,7 +324,6 @@ const SkillGapsAnalysis = () => {
               </Select>
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddGapModal(false)}>
               Cancel
