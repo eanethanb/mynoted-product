@@ -84,6 +84,35 @@ app.get("/api/report/:id", async (req, res) => {
   }
 });
 
+// ✅ Get employee report by employee_id from spectre.employee_reports
+app.get("/api/employee-report/:employeeId", async (req, res) => {
+  try {
+    const { employeeId } = req.params;
+
+    const { rows } = await pool.query(
+      `SELECT run_id, employee_id, report_json, report_type, created_at
+       FROM spectre.employee_reports
+       WHERE employee_id = $1
+       ORDER BY created_at DESC
+       LIMIT 1;`,
+      [employeeId]
+    );
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: "No report found for this employee" });
+    }
+
+    return res.json(rows[0]);
+  } catch (err) {
+    console.error("EMPLOYEE_REPORT_ERROR:", err);
+    return res.status(500).json({
+      error: "Failed to fetch employee report",
+      details: err?.message || String(err),
+      code: err?.code || null,
+    });
+  }
+});
+
 // ✅ Insert report (dynamic)
 app.post("/api/report", async (req, res) => {
   try {

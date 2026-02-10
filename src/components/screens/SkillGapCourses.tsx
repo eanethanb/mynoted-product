@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { courses, videoResources } from '@/data/mockData';
+import { useReportData } from "@/contexts/ReportContext";
 import GapBadge from '@/components/GapBadge';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight, BookOpen, Clock, Sparkles, Play, Eye, ArrowLeft } from 'lucide-react';
@@ -7,6 +7,7 @@ import PaywallModal from '@/components/PaywallModal';
 import Disclaimer from '@/components/Disclaimer';
 
 const SkillGapCourses = () => {
+  const { courses, videoResources } = useReportData();
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   const [activeCourse, setActiveCourse] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'videos' | 'quiz' | 'flashcards'>('videos');

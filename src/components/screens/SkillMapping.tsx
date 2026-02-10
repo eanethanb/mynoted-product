@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { peers, axisOptions, quadrant, clusterDefinition } from "@/data/mockData";
+import { useReportData } from "@/contexts/ReportContext";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -18,6 +18,7 @@ type AxisOption = {
 };
 
 const SkillMapping = () => {
+  const { peers, axisOptions, quadrant, clusterDefinition } = useReportData();
   const [xAxis, setXAxis] = useState(
     (axisOptions.xAxis[0] as AxisOption | undefined)?.id ?? "x"
   );
