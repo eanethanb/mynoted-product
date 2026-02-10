@@ -2,7 +2,7 @@
 // src/components/screens/PeerProfiles.tsx
 
 import { useMemo, useState } from "react";
-import { peers as reportPeers, meta, executiveSummary, clusterDefinition } from "@/data/mockData";
+import { useReportData } from "@/contexts/ReportContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -42,6 +42,7 @@ const createEmptyPeerEntry = (): PeerEntry => ({
 });
 
 const PeerProfiles = () => {
+  const { peers: reportPeers, meta, clusterDefinition } = useReportData();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
 

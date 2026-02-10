@@ -1,8 +1,9 @@
-import { competitiveAdvantages, developmentOpportunities, executiveSummary, meta } from '@/data/mockData';
+import { useReportData } from "@/contexts/ReportContext";
 import { CheckCircle, AlertTriangle } from 'lucide-react';
 import Disclaimer from '@/components/Disclaimer';
 
 const SwotAnalysis = () => {
+  const { competitiveAdvantages, developmentOpportunities, executiveSummary, meta } = useReportData();
   const targetName = (meta?.targetPerson ?? "You").split("(")[0].trim();
 
   return (

@@ -1,9 +1,6 @@
 // src/components/screens/ComparativeSkillAnalysis.tsx
 import { useMemo, useState } from "react";
-import {
-  peers as reportPeers,
-  skillScores as reportSkillScores,
-} from "@/data/mockData";
+import { useReportData } from "@/contexts/ReportContext";
 import SkillCell from "@/components/SkillCell";
 import { Check, X, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -26,6 +23,7 @@ type Peer = {
 };
 
 const ComparativeSkillAnalysis = () => {
+  const { peers: reportPeers, skillScores: reportSkillScores } = useReportData();
   const [feedbackGiven, setFeedbackGiven] = useState<
     Record<string, FeedbackType | null>
   >({});

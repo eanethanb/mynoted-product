@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { skillGaps as reportSkillGaps } from "@/data/mockData";
+import { useReportData } from "@/contexts/ReportContext";
 import GapBadge from "@/components/GapBadge";
 import { ChevronRight, Check, AlertTriangle, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,7 @@ interface CustomSkillGap {
 }
 
 const SkillGapsAnalysis = () => {
+  const { skillGaps: reportSkillGaps } = useReportData();
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
   const [showWaitlist, setShowWaitlist] = useState(false);
 
