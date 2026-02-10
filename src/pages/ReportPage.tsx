@@ -61,10 +61,13 @@ const ReportPage = () => {
         }
         const data = await res.json();
         setReport(data.report_json);
-      } catch {
-        // Fallback: use static JSON if the employee ID matches the one in reportData
-        console.log("Edge function unavailable, using static report data as fallback");
-        setReport(reportDataFallback);
+      } catch (err) {
+        console.log("Edge function unavailable:", err);
+        if (employeeId === "demo") {
+          setReport(reportDataFallback);
+        } else {
+          setError("Could not load report. The backend function is currently unavailable.");
+        }
       } finally {
         setLoading(false);
       }
