@@ -2,7 +2,7 @@
 // src/components/screens/PeerProfiles.tsx
 
 import { useMemo, useState } from "react";
-import { peers as reportPeers, meta, executiveSummary } from "@/data/mockData";
+import { peers as reportPeers, meta, executiveSummary, clusterDefinition } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -143,30 +143,30 @@ const PeerProfiles = () => {
               peer.isUser ? "border-primary bg-primary/5" : "border-border"
             }`}
           >
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
               <div className="flex-1 min-w-0">
-
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-semibold text-foreground md:text-base">
-                    {peer.name}{" "}
-                    <span className="font-normal text-muted-foreground">
-                      ({peer.title}, {peer.company})
-                    </span>
+                  <h3 className="text-sm font-semibold text-foreground md:text-base truncate max-w-[280px] sm:max-w-none">
+                    {peer.name.split("(")[0].trim()}
                   </h3>
                   {peer.isUser && (
                     <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                       You
                     </span>
                   )}
-
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground md:text-sm">
-                  {peer.description}
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  {peer.title} · {peer.company}
                 </p>
+                {peer.description && (
+                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                    {peer.description}
+                  </p>
+                )}
               </div>
-              <div className="flex shrink-0 gap-3 text-xs md:text-sm">
-                <span className="text-primary">X: {peer.xScore}</span>
-                <span className="text-success">Y: {peer.yScore}</span>
+              <div className="flex shrink-0 gap-3 text-[11px] font-medium">
+                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-primary">{(clusterDefinition as any)?.axes?.x?.label?.split(" ")[0] ?? "X"}: {peer.xScore}</span>
+                <span className="rounded-md bg-success/10 px-2 py-0.5 text-success">{(clusterDefinition as any)?.axes?.y?.label?.split(" ")[0] ?? "Y"}: {peer.yScore}</span>
               </div>
             </div>
           </div>

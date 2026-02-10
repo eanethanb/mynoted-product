@@ -82,17 +82,7 @@ const ComparativeSkillAnalysis = () => {
           Comparative Skill Analysis
         </h1>
         <p className="mt-2 text-xs text-muted-foreground md:text-sm">
-          Analysis for {userName}
-          {userPeer?.title || userPeer?.company ? (
-            <>
-              {" "}
-              ({userPeer?.title}
-              {userPeer?.title && userPeer?.company ? ", " : ""}
-              {userPeer?.company})
-            </>
-          ) : null}
-          {" "}
-          across {skillScoreList.length} skill clusters (0 = low, 3 = strong)
+          {userName.split("(")[0].trim()} · {skillScoreList.length} skill clusters · Score 0–3
         </p>
       </div>
 
@@ -110,14 +100,21 @@ const ComparativeSkillAnalysis = () => {
                 <th className="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
                   Skill Cluster
                 </th>
-                {peerNames.map((name) => (
-                  <th
-                    key={name}
-                    className="px-4 py-3 text-center text-sm font-medium text-muted-foreground"
-                  >
-                    {name}
-                  </th>
-                ))}
+                {peerNames.map((name) => {
+                  const shortName = name.split("(")[0].trim();
+                  const peer = peerList.find((p) => p.name === name);
+                  return (
+                    <th
+                      key={name}
+                      className="px-2 py-3 text-center text-[11px] font-medium text-muted-foreground max-w-[120px]"
+                    >
+                      <div className="truncate">{shortName}</div>
+                      {peer?.company && (
+                        <div className="truncate text-[10px] font-normal opacity-60">{peer.company}</div>
+                      )}
+                    </th>
+                  );
+                })}
                 <th className="px-4 py-3 text-center text-sm font-medium text-muted-foreground">
                   <Tooltip>
                     <TooltipTrigger asChild>

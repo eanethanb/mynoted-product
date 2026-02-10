@@ -127,23 +127,17 @@ const SkillMapping = () => {
       <div className="rounded-lg border border-border bg-card p-6">
         <div className="relative mx-auto aspect-square max-w-2xl">
           {/* Quadrant Labels */}
-          <div className="absolute left-0 top-0 text-xs text-muted-foreground">
-            <div>Low {xAxisLabel}</div>
-            <div>High {yAxisLabel}</div>
+          <div className="absolute left-0 top-0 max-w-[100px] text-[10px] leading-tight text-muted-foreground/70">
+            Strong {yAxisLabel?.split("&")[0]?.trim()}
           </div>
-          <div className="absolute right-0 top-0 text-right">
-            <div className="text-xs font-medium text-success">Target Zone</div>
-            <div className="text-xs text-success">
-              High {xAxisLabel} + {yAxisLabel}
-            </div>
+          <div className="absolute right-0 top-0 text-right max-w-[100px]">
+            <div className="text-[10px] font-semibold text-success">★ Target Zone</div>
           </div>
-          <div className="absolute bottom-0 left-0 text-xs text-muted-foreground">
-            <div>Low {xAxisLabel}</div>
-            <div>Low {yAxisLabel}</div>
+          <div className="absolute bottom-0 left-0 max-w-[100px] text-[10px] leading-tight text-muted-foreground/50">
+            Developing
           </div>
-          <div className="absolute bottom-0 right-0 text-right text-xs text-muted-foreground">
-            <div>High {xAxisLabel}</div>
-            <div>Low {yAxisLabel}</div>
+          <div className="absolute bottom-0 right-0 text-right max-w-[100px] text-[10px] leading-tight text-muted-foreground/70">
+            Strong {xAxisLabel?.split("&")[0]?.trim()}
           </div>
 
           {/* Quadrant Grid */}
@@ -156,11 +150,11 @@ const SkillMapping = () => {
             </div>
 
             {/* Axis Labels */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-              {xAxisLabel}
+            <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[11px] font-medium text-muted-foreground whitespace-nowrap">
+              → {xAxisLabel}
             </div>
-            <div className="absolute -left-6 top-1/2 origin-center -translate-y-1/2 -rotate-90 text-xs text-muted-foreground">
-              {yAxisLabel}
+            <div className="absolute -left-7 top-1/2 origin-center -translate-y-1/2 -rotate-90 text-[11px] font-medium text-muted-foreground whitespace-nowrap">
+              ↑ {yAxisLabel}
             </div>
 
             {/* Peer Points */}
@@ -189,19 +183,18 @@ const SkillMapping = () => {
       </div>
 
       {/* Legend */}
-      <div className="mt-6 space-y-2 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-primary" />
-          <span className="text-muted-foreground">
-            Top Left (High {yAxisLabel}, Low {xAxisLabel}) - Strong {yAxisLabel}
-          </span>
+      <div className="mt-6 flex flex-wrap gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded-full bg-primary" />
+          <span>You</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="h-3 w-3 rounded-full bg-success" />
-          <span className="text-muted-foreground">
-            Top Right (High {yAxisLabel}, High {xAxisLabel}) - Complete profile —
-            target zone
-          </span>
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded-full bg-primary/60" />
+          <span>Peer</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded-full bg-success" />
+          <span>Target Zone (top-right)</span>
         </div>
       </div>
 
