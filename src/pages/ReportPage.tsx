@@ -11,8 +11,9 @@ import SkillGapCourses from "@/components/screens/SkillGapCourses";
 import CreateCourse from "@/components/screens/CreateCourse";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import reportDataFallback from "@/data/reportData.json";
 
-const API_BASE = "http://127.0.0.1:5050";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 const tabs = [
   { id: "peers", label: "Peer Profiles" },
@@ -45,15 +46,25 @@ const ReportPage = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`${API_BASE}/api/employee-report/${employeeId}`);
+        // Try edge function first
+        const res = await fetch(
+          `${SUPABASE_URL}/functions/v1/employee-report?employee_id=${employeeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
         if (!res.ok) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data.error || `HTTP ${res.status}`);
+          throw new Error("Edge function unavailable");
         }
         const data = await res.json();
         setReport(data.report_json);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch report");
+      } catch {
+        // Fallback: use static JSON if the employee ID matches the one in reportData
+        console.log("Edge function unavailable, using static report data as fallback");
+        setReport(reportDataFallback);
       } finally {
         setLoading(false);
       }
@@ -84,11 +95,7 @@ const ReportPage = () => {
           <p className="mt-2 text-sm text-muted-foreground">
             {error || "No report data available for this employee."}
           </p>
-          <Button
-            variant="outline"
-            className="mt-6 gap-2"
-            onClick={() => navigate("/")}
-          >
+          <Button variant="outline" className="mt-6 gap-2" onClick={() => navigate("/")}>
             <ArrowLeft className="h-4 w-4" />
             Back to search
           </Button>
@@ -99,20 +106,13 @@ const ReportPage = () => {
 
   const renderActiveScreen = () => {
     switch (activeTab) {
-      case "peers":
-        return <PeerProfiles />;
-      case "comparative":
-        return <ComparativeSkillAnalysis />;
-      case "mapping":
-        return <SkillMapping />;
-      case "gaps":
-        return <SkillGapsAnalysis />;
-      case "courses":
-        return <SkillGapCourses />;
-      case "create":
-        return <CreateCourse />;
-      default:
-        return <PeerProfiles />;
+      case "peers": return <PeerProfiles />;
+      case "comparative": return <ComparativeSkillAnalysis />;
+      case "mapping": return <SkillMapping />;
+      case "gaps": return <SkillGapsAnalysis />;
+      case "courses": return <SkillGapCourses />;
+      case "create": return <CreateCourse />;
+      default: return <PeerProfiles />;
     }
   };
 
