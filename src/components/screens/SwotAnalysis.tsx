@@ -3,7 +3,7 @@ import { CheckCircle, AlertTriangle } from 'lucide-react';
 import Disclaimer from '@/components/Disclaimer';
 
 const SwotAnalysis = () => {
-  const targetName = meta?.targetPerson ?? "You";
+  const targetName = (meta?.targetPerson ?? "You").split("(")[0].trim();
 
   return (
     <div className="animate-fade-in">
@@ -59,11 +59,13 @@ const SwotAnalysis = () => {
       </div>
 
       {/* Executive Summary */}
-      <div className="mt-8 rounded-lg border border-border bg-card p-6">
-        <h3 className="mb-3 text-lg font-semibold text-foreground">Executive Summary</h3>
-        <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
-          {executiveSummary}
-        </p>
+      <div className="mt-8 rounded-lg border border-border bg-card p-5 md:p-6">
+        <h3 className="mb-3 text-base font-semibold text-foreground">Executive Summary</h3>
+        <div className="text-sm leading-relaxed text-muted-foreground space-y-3">
+          {String(executiveSummary).split("\n\n").map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
       </div>
 
       <Disclaimer />

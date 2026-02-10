@@ -215,9 +215,9 @@ const SkillGapsAnalysis = () => {
               <h4 className="text-xs font-medium text-foreground md:text-sm">ACTION ITEMS:</h4>
               <ul className="mt-1.5 space-y-1 md:mt-2 md:space-y-1.5">
                 {(gap.actionItems || []).map((item: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground md:text-sm">
-                    <span className="mt-0.5 text-primary">→</span>
-                    {item}
+                  <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground md:text-sm leading-relaxed">
+                    <span className="mt-0.5 shrink-0 text-primary">→</span>
+                    <span className="line-clamp-3">{item}</span>
                   </li>
                 ))}
               </ul>
