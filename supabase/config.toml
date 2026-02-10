@@ -2,3 +2,9 @@ project_id = "sfhrixgpqqiufowjuaby"
 
 [functions.ping]
 verify_jwt = false
+
+[functions.employee-report]
+verify_jwt = false
+
+[functions.getreport]
+verify_jwt = false

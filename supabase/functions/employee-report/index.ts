@@ -11,26 +11,18 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Support both GET query param and POST body
-  let employeeId: string | null = null;
   const url = new URL(req.url);
-  employeeId = url.searchParams.get("employee_id");
-
-  if (!employeeId && req.method === "POST") {
-    try {
-      const body = await req.json();
-      employeeId = body.employee_id;
-    } catch { /* ignore */ }
-  }
+  const employeeId = url.searchParams.get("employee_id");
 
   if (!employeeId) {
-    return new Response(JSON.stringify({ status: "ok" }), {
+    return new Response(JSON.stringify({ error: "employee_id is required" }), {
+      status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 
   const connectionString = Deno.env.get("SPECTRE_DB_URL")!;
-  const sql = postgres(connectionString, { prepare: false, ssl: "require" });
+  const sql = postgres(connectionString, { prepare: false });
 
   try {
     const rows = await sql`
