@@ -1,8 +1,8 @@
 
 // src/components/screens/PeerProfiles.tsx
 
-import { useEffect, useMemo, useState } from "react";
-import { peers as fallbackPeers, getMockReport } from "@/data/mockData";
+import { useMemo, useState } from "react";
+import { peers as reportPeers, meta, executiveSummary } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -27,24 +27,6 @@ import {
 import WaitlistModal from "@/components/WaitlistModal";
 import Disclaimer from "@/components/Disclaimer";
 
-/**
- * Try multiple possible locations for peers inside the DB JSON payload.
- * This makes the UI robust even if the GPT JSON shape evolves.
- */
-function extractPeersFromReportPayload(payload: any) {
-  const candidates = [
-    payload?.peers,
-    payload?.sections?.peers,
-    payload?.sections?.peerProfiles,
-    payload?.peerProfiles,
-    payload?.sections?.peer_profiles,
-  ];
-
-  const found = candidates.find((x) => Array.isArray(x));
-  return (found as any[] | null) ?? null;
-}
-
-
 interface PeerEntry {
   url: string;
   context: string;
@@ -60,16 +42,12 @@ const createEmptyPeerEntry = (): PeerEntry => ({
 });
 
 const PeerProfiles = () => {
-  // Edit / waitlist dialogs
   const [showEditModal, setShowEditModal] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
 
-
-  // Start with mock peers so the UI never breaks on first render
-  const [peerList, setPeerList] = useState<any[]>(fallbackPeers);
+  const [peerList] = useState<any[]>(reportPeers);
   const [newPeerUrl, setNewPeerUrl] = useState("");
 
-  // Peer entries for the add-peer form
   const [peerEntries, setPeerEntries] = useState<PeerEntry[]>([createEmptyPeerEntry()]);
 
   const addAnotherPeer = () => {
@@ -81,39 +59,14 @@ const PeerProfiles = () => {
     setNewPeerUrl("");
   };
 
-  // Profile upload waitlist
   const [showProfileWaitlistModal, setShowProfileWaitlistModal] = useState(false);
   const [profileWaitlistJoined, setProfileWaitlistJoined] = useState(false);
 
-  // 🔌 Load peers from DB JSON (latest dynamic_reports row)
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const payload = await getMockReport(); // latest report.payload from API
-        const peersFromDb = extractPeersFromReportPayload(payload);
-
-        if (!cancelled && Array.isArray(peersFromDb) && peersFromDb.length > 0) {
-          setPeerList(peersFromDb);
-        }
-      } catch (err) {
-        console.error("PeerProfiles: DB load failed, using fallback peers:", err);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // All peers except the "You" row
   const nonUserPeers = useMemo(
     () => peerList.filter((p: any) => !p?.isUser),
     [peerList]
   );
 
-  // All edit actions currently just open the waitlist (MVP)
   const handleRemovePeer = (_peerId: string) => {
     setShowWaitlist(true);
   };
@@ -212,8 +165,8 @@ const PeerProfiles = () => {
                 </p>
               </div>
               <div className="flex shrink-0 gap-3 text-xs md:text-sm">
-                <span className="text-primary">P/T: {peer.productTechScore}</span>
-                <span className="text-success">GTM: {peer.gtmScore}</span>
+                <span className="text-primary">X: {peer.xScore}</span>
+                <span className="text-success">Y: {peer.yScore}</span>
               </div>
             </div>
           </div>
@@ -226,13 +179,11 @@ const PeerProfiles = () => {
         if (!open) resetPeerEntries();
       }}>
         <DialogContent className="w-[100vw] max-w-[100vw] sm:w-[92vw] sm:max-w-[560px] md:max-w-[600px] p-0 gap-0 max-h-[90vh] flex flex-col">
-          {/* Sticky Header */}
           <DialogHeader className="px-4 py-4 sm:px-6 border-b border-border shrink-0">
             <DialogTitle>Edit Peer Set</DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4">
-            {/* Current peers (excluding You) */}
             <div>
               <h4 className="mb-2 text-sm font-medium text-foreground">
                 Current Peers
@@ -256,7 +207,6 @@ const PeerProfiles = () => {
               </div>
             </div>
 
-            {/* Add new peer via LinkedIn URL */}
             <div>
 
               <h4 className="mb-2 text-sm font-medium text-foreground">
@@ -277,7 +227,6 @@ const PeerProfiles = () => {
                 </Button>
               </div>
 
-              {/* Add Another Peer */}
               <button
                 onClick={addAnotherPeer}
                 className="mt-3 mb-4 flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
@@ -288,7 +237,6 @@ const PeerProfiles = () => {
             </div>
           </div>
 
-          {/* Sticky Footer */}
           <div className="px-4 py-4 sm:px-6 border-t border-border bg-background shrink-0">
             <Button onClick={handleAddPeer} className="w-full">
               Add Peer{peerEntries.length > 1 ? 's' : ''}
