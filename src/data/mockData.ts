@@ -1,250 +1,122 @@
 // src/data/mockData.ts
+// All data is now sourced from reportData.json — the single source of truth.
 
-// ---------------------- FALLBACK MOCKS ----------------------
+import reportData from "./reportData.json";
 
-// Used by PeerProfiles as fallback
-export const peers = [
-  {
-    id: "user",
-    name: "You",
-    title: "COO / Product Leader",
-    company: "Your Company",
-    description: "Your baseline profile used for comparison.",
-    productTechScore: 6,
-    gtmScore: 6,
-    isUser: true,
-  },
-  {
-    id: "peer-1",
-    name: "Peer 1",
-    title: "COO",
-    company: "PeerCorp A",
-    description: "Operator with strong GTM and execution strengths.",
-    productTechScore: 7,
-    gtmScore: 8,
-  },
-  {
-    id: "peer-2",
-    name: "Peer 2",
-    title: "COO",
-    company: "PeerCorp B",
-    description: "Balanced profile with solid operations and people leadership.",
-    productTechScore: 6,
-    gtmScore: 7,
-  },
-];
+// ---------------------- RE-EXPORT FROM JSON ----------------------
 
-// Used by SkillGapsAnalysis as fallback
-export const skillGaps = [
-  {
-    id: "gap-1",
-    title: "Board-Level Storytelling & Investor Narrative",
-    description:
-      "Translating ops performance into a crisp board / investor narrative with clear metrics and upside.",
-    category: "Executive Communication",
-    gapScore: 3,
-    actionItems: [
-      "Draft a 6–8 slide mock board update for your current business.",
-      "Shadow one board meeting to study structure and language.",
-      "Write monthly narrative memos tying operations to P&L.",
-    ],
-  },
-  {
-    id: "gap-2",
-    title: "Data-Driven Operating Cadence",
-    description:
-      "Running the business on a consistent metric stack and weekly operating rhythm.",
-    category: "Operating System",
-    gapScore: 2,
-    actionItems: [
-      "Define a one-page scorecard with 10–12 core metrics.",
-      "Set up a weekly operating review with a fixed agenda.",
-      "Assign owners to red metrics with 14-day experiments.",
+// Peers — used by PeerProfiles, SkillMapping, ComparativeSkillAnalysis
+export const peers = reportData.peers;
 
-    ],
-  },
-];
+// Heatmap matrix — used by ComparativeSkillAnalysis
+// Transform heatmapMatrix into the skillScores format the heatmap component expects
+export const skillScores = reportData.heatmapMatrix.map((row) => ({
+  skillCluster: row.cluster,
+  scores: Object.fromEntries(
+    reportData.peers.map((peer) => [
+      peer.name,
+      (row.values as Record<string, number>)[peer.id] ?? 0,
+    ])
+  ),
+}));
 
+// Skill gaps — used by SkillGapsAnalysis
+// Map gapActions to the shape the UI expects (id, title, description, category, gapScore, actionItems)
+export const skillGaps = reportData.gapActions.map((ga, i) => ({
+  id: `gap-${i + 1}`,
+  title: ga.cluster,
+  description: ga.description,
+  category: ga.category,
+  gapScore: ga.gap,
+  actionItems: ga.actions,
+  timeline: ga.timeline,
+}));
 
-// Used by ComparativeSkillAnalysis (heatmap)
-export const skillScores = [
-  {
-    skillCluster: "Strategy & Vision",
-    scores: {
-      You: 3,
-      "Peer 1": 3,
-      "Peer 2": 2,
-    },
-  },
-  {
-    skillCluster: "P&L / Ops Leadership",
-    scores: {
-      You: 2,
-      "Peer 1": 3,
-      "Peer 2": 3,
-    },
-  },
-  {
-    skillCluster: "People & Culture",
-    scores: {
-      You: 3,
-      "Peer 1": 2,
-      "Peer 2": 2,
-    },
-  },
-  {
-    skillCluster: "AI / Automation",
-    scores: {
-      You: 1,
-      "Peer 1": 2,
-      "Peer 2": 2,
-    },
-  },
-];
-
-// Used by SkillMapping (quadrant)
+// Axis options — used by SkillMapping quadrant
 export const axisOptions = {
   xAxis: [
-    { id: "productTechScore", label: "Product / Tech" },
-    { id: "gtmScore", label: "GTM / Scale" },
+    {
+      id: reportData.meta.axisScoreFields.x,
+      label: reportData.meta.axisScoreFields.xLabel,
+    },
   ],
   yAxis: [
-    { id: "productTechScore", label: "Product / Tech" },
-    { id: "gtmScore", label: "GTM / Scale" },
+    {
+      id: reportData.meta.axisScoreFields.y,
+      label: reportData.meta.axisScoreFields.yLabel,
+    },
   ],
 };
 
-// Used by SkillGapCourses
-export const courses = [
-  {
-    id: "course-1",
-    title: "Board Storytelling for Operators",
-    level: "Intermediate",
+// Courses — used by SkillGapCourses
+// Transform coursePlan into the shape the courses UI expects
+export const courses = reportData.coursePlan.map((cp, i) => {
+  const totalHours =
+    (cp.levels.beginner?.estimatedHours ?? 0) +
+    (cp.levels.intermediate?.estimatedHours ?? 0) +
+    (cp.levels.advanced?.estimatedHours ?? 0);
+
+  // Build chapters from levels
+  const chapters = (["beginner", "intermediate", "advanced"] as const)
+    .filter((lvl) => cp.levels[lvl])
+    .map((lvl, j) => ({
+      id: `ch-${i + 1}-${j + 1}`,
+      title: `${lvl.charAt(0).toUpperCase() + lvl.slice(1)} — ${cp.levels[lvl]!.outcome.slice(0, 60)}…`,
+      lessons: cp.levels[lvl]!.modules,
+    }));
+
+  return {
+    id: `course-${i + 1}`,
+    title: cp.skill.replace(/\b\w/g, (c) => c.toUpperCase()),
+    level: cp.importance,
     provider: "MyNoted AI",
-    description:
-      "Learn how to convert operational performance into a clear board narrative.",
-    url: "https://example.com/board-storytelling",
-    duration: "4h 30m",
+    description: cp.reason,
+    url: reportData.primaryCourseLink?.url ?? "#",
+    duration: `${totalHours}h`,
     levels: 3,
-    gapScore: 3,
-    chapters: [
-      {
-        id: "ch-1-1",
-        title: "Foundations of Board Communication",
-        lessons: ["Board Meeting Anatomy", "Stakeholder Mapping", "Narrative vs Data"],
-      },
-      {
-        id: "ch-1-2",
-        title: "Building Your Board Deck",
-        lessons: ["Slide Structure", "Metrics That Matter", "The Ask"],
-      },
-    ],
-  },
-  {
-    id: "course-2",
-    title: "Building a Weekly Operating System",
-    level: "Intermediate",
-    provider: "MyNoted AI",
-    description:
-      "Design a scorecard and weekly review rhythm for your business.",
-    url: "https://example.com/operating-system",
-    duration: "3h 15m",
-    levels: 2,
-    gapScore: 2,
-    chapters: [
-      {
-        id: "ch-2-1",
-        title: "Designing Your Scorecard",
-        lessons: ["Choosing Core Metrics", "Red/Yellow/Green Framework"],
-      },
-      {
-        id: "ch-2-2",
-        title: "Running the Weekly Review",
-        lessons: ["Agenda Design", "Action Tracking", "Continuous Improvement"],
-      },
-    ],
-  },
-];
+    gapScore: cp.importance === "Critical" ? 3 : 2,
+    chapters,
+  };
+});
 
-export const videoResources = [
-  {
-    id: "vid-1",
-    title: "How COOs Present to Boards",
-    platform: "YouTube",
-    url: "https://youtube.com/watch?v=dummy1",
-    duration: "18:32",
-    views: "12.4K",
-  },
-  {
-    id: "vid-2",
-    title: "Weekly Operating Review in Practice",
-    platform: "YouTube",
-    url: "https://youtube.com/watch?v=dummy2",
-    duration: "22:10",
-    views: "8.1K",
-  },
-];
+// Recommended courses from the JSON (pre-built course links)
+export const recommendedCourses = reportData.recommendedCourses ?? [];
 
-// simple extra helper for courses page
+// Video resources — currently empty in JSON, provide empty array
+export const videoResources = (reportData.recommendedCourses?.[0]?.videoResources ?? []).map(
+  (v: any, i: number) => ({
+    id: `vid-${i + 1}`,
+    title: v.title ?? "Video",
+    platform: v.platform ?? "YouTube",
+    url: v.url ?? "#",
+    duration: v.duration ?? "—",
+    views: v.views ?? "—",
+  })
+);
+
+// Course link
 export const courseLink = {
-  label: "View more curated courses",
-  url: "https://example.com/all-courses",
+  label: reportData.primaryCourseLink?.label ?? "View more curated courses",
+  url: reportData.primaryCourseLink?.url ?? "#",
 };
 
-// Used by PaidFeatures
-export const experienceSignals = [
-  "Led P&L > $50M",
-  "Board presentation experience",
-  "M&A integration",
-  "International expansion",
-  "IPO preparation",
-  "Team scaling (50+ reports)",
-  "Digital transformation",
-  "Fundraising support",
-];
+// SWOT / Pros & Cons — used by SwotAnalysis
+export const competitiveAdvantages = reportData.prosAndCons.pros;
+export const developmentOpportunities = reportData.prosAndCons.cons;
 
-export const goalChips = [
-  "CEO track",
-  "Board seat",
-  "Advisory roles",
-  "Startup COO",
-  "Enterprise COO",
-  "Consulting pivot",
-  "Portfolio operator",
-];
+// Paid features — used by PaidFeatures
+export const experienceSignals = reportData.experienceSignals ?? [];
+export const goalChips = reportData.goalChips ?? [];
 
-// Used by SwotAnalysis
-export const competitiveAdvantages = [
-  {
-    title: "Operational Excellence",
-    description: "Deep expertise in P&L management, process optimization, and scaling operations across multiple business units.",
-  },
-  {
-    title: "People Leadership",
-    description: "Proven ability to build, mentor, and retain high-performing teams in fast-paced environments.",
-  },
-  {
-    title: "Strategic Execution",
-    description: "Track record of translating board-level strategy into measurable operational outcomes.",
-  },
-];
+// Meta / executive summary
+export const meta = reportData.meta;
+export const executiveSummary = reportData.executiveSummary;
+export const personSkills = reportData.personSkills;
+export const quadrant = reportData.quadrant;
+export const clusterDefinition = reportData.clusterDefinition;
+export const roadmap = reportData.roadmap;
 
-export const developmentOpportunities = [
-  {
-    title: "Customer Experience Depth",
-    description: "Limited direct CX ownership; opportunity to deepen customer journey mapping and NPS-driven initiatives.",
-  },
-  {
-    title: "Digital Transformation",
-    description: "Emerging capability in AI/automation; focused upskilling would accelerate modernization efforts.",
-  },
-  {
-    title: "Partnership & Ecosystem Management",
-    description: "Room to build fluency in strategic partnerships, vendor ecosystems, and co-development models.",
-  },
-];
-
-// ---------------------- DB API LOADER ----------------------
+// ---------------------- DB API LOADER (kept for future use) ----------------------
 
 const API_BASE = "http://127.0.0.1:5050";
 
@@ -264,10 +136,9 @@ async function fetchJson<T>(url: string): Promise<T> {
   return (await res.json()) as T;
 }
 
-// 🔑 Used by PeerProfiles + SkillGapsAnalysis (and can be reused later)
 export async function getMockReport() {
-  const data = await fetchJson<LatestReportResponse>(`${API_BASE}/api/report/latest`);
-  // we only care about the JSON payload, frontend expects `payload` shape
+  const data = await fetchJson<LatestReportResponse>(
+    `${API_BASE}/api/report/latest`
+  );
   return data.payload;
 }
-

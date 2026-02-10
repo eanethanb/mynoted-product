@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { skillGaps as fallbackSkillGaps, getMockReport } from "@/data/mockData";
+import { useMemo, useState } from "react";
+import { skillGaps as reportSkillGaps } from "@/data/mockData";
 import GapBadge from "@/components/GapBadge";
 import { ChevronRight, Check, AlertTriangle, X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -41,26 +41,11 @@ interface CustomSkillGap {
   priority: "High" | "Medium" | "Low";
 }
 
-// ✅ Try multiple likely paths so DB JSON can evolve without breaking UI
-function extractSkillGapsFromPayload(payload: any) {
-  const candidates = [
-    payload?.skillGaps,
-    payload?.sections?.skillGaps,
-    payload?.sections?.skill_gaps,
-    payload?.sections?.gaps,
-    payload?.gaps,
-  ];
-
-  const found = candidates.find((x) => Array.isArray(x));
-  return found ?? null;
-}
-
 const SkillGapsAnalysis = () => {
   const [feedback, setFeedback] = useState<Record<string, GapFeedback>>({});
   const [showWaitlist, setShowWaitlist] = useState(false);
 
-  // ✅ Start with fallback so UI never breaks
-  const [skillGapsList, setSkillGapsList] = useState<any[]>(fallbackSkillGaps);
+  const skillGapsList = reportSkillGaps;
 
   // Custom skill gap state
   const [customGaps, setCustomGaps] = useState<CustomSkillGap[]>([]);
@@ -69,28 +54,6 @@ const SkillGapsAnalysis = () => {
   const [newGapTitle, setNewGapTitle] = useState("");
   const [newGapDescription, setNewGapDescription] = useState("");
   const [newGapPriority, setNewGapPriority] = useState<"High" | "Medium" | "Low">("Medium");
-
-  // ✅ Load DB once and override gaps if present
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const payload = await getMockReport();
-        const gapsFromDb = extractSkillGapsFromPayload(payload);
-
-        if (!cancelled && Array.isArray(gapsFromDb) && gapsFromDb.length > 0) {
-          setSkillGapsList(gapsFromDb);
-        }
-      } catch (e) {
-        console.error("SkillGapsAnalysis DB load failed, using fallback mock skillGaps:", e);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleAccuracyChange = (_gapId: string, _accuracy: AccuracyType) => {
     setShowWaitlist(true);
@@ -111,10 +74,7 @@ const SkillGapsAnalysis = () => {
   };
 
   const handleAddSkillGap = () => {
-    // right now still waitlist; later we’ll open modal and persist to DB
     setShowWaitlist(true);
-    // If you want to enable local add immediately instead, use:
-    // setShowAddGapModal(true);
   };
 
   const handleSaveNewGap = () => {
@@ -146,7 +106,6 @@ const SkillGapsAnalysis = () => {
     }
   };
 
-  // ✅ Optional: count top 3 from list if present, otherwise just show banner text
   const top3 = useMemo(() => skillGapsList?.slice?.(0, 3) ?? [], [skillGapsList]);
 
   return (
@@ -166,7 +125,7 @@ const SkillGapsAnalysis = () => {
               <AlertTriangle className="h-3 w-3 text-primary md:h-4 md:w-4" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-foreground md:text-base">Top 3 Priority Gaps</h3>
+              <h3 className="text-sm font-semibold text-foreground md:text-base">Top Priority Gaps</h3>
               <p className="mt-1 text-xs text-muted-foreground md:text-sm">
                 Critical for role excellence and advancement. These represent the most significant
                 development opportunities.
@@ -243,6 +202,15 @@ const SkillGapsAnalysis = () => {
               </Button>
             </div>
 
+            {/* Timeline badge */}
+            {gap.timeline && (
+              <div className="mt-2">
+                <span className="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  Timeline: {gap.timeline}
+                </span>
+              </div>
+            )}
+
             <div className="mt-3 md:mt-4">
               <h4 className="text-xs font-medium text-foreground md:text-sm">ACTION ITEMS:</h4>
               <ul className="mt-1.5 space-y-1 md:mt-2 md:space-y-1.5">
@@ -289,7 +257,6 @@ const SkillGapsAnalysis = () => {
                 </div>
               </RadioGroup>
 
-              {/* Not Relevant Reasons */}
               {feedback[gap.id]?.accuracy === "not-relevant" && (
                 <div className="mt-3 rounded-md bg-muted/50 p-3">
                   <p className="mb-2 text-xs font-medium text-muted-foreground">Tell us why this isn't relevant:</p>

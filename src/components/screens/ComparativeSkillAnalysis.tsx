@@ -1,9 +1,8 @@
 // src/components/screens/ComparativeSkillAnalysis.tsx
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
-  peers as fallbackPeers,
-  skillScores as fallbackSkillScores,
-  getMockReport,
+  peers as reportPeers,
+  skillScores as reportSkillScores,
 } from "@/data/mockData";
 import SkillCell from "@/components/SkillCell";
 import { Check, X, Info } from "lucide-react";
@@ -26,35 +25,6 @@ type Peer = {
   isUser?: boolean;
 };
 
-// ---- helpers to read from DB payload safely ----
-
-// Try multiple paths so backend JSON can evolve without breaking UI
-function extractPeersFromPayload(payload: any): Peer[] | null {
-  const candidates = [
-    payload?.peers,
-    payload?.sections?.peers,
-    payload?.sections?.peerProfiles,
-    payload?.peerProfiles,
-    payload?.sections?.peer_profiles,
-  ];
-  const found = candidates.find((x) => Array.isArray(x));
-  return (found as Peer[]) ?? null;
-}
-
-function extractSkillScoresFromPayload(payload: any): SkillScoreRow[] | null {
-  const candidates = [
-    payload?.skillScores,
-    payload?.sections?.skillScores,
-    payload?.sections?.skill_scores,
-    payload?.sections?.comparativeSkills,
-    payload?.comparativeSkills,
-  ];
-  const found = candidates.find((x) => Array.isArray(x));
-  return (found as SkillScoreRow[]) ?? null;
-}
-
-// ------------------------------------------------
-
 const ComparativeSkillAnalysis = () => {
   const [feedbackGiven, setFeedbackGiven] = useState<
     Record<string, FeedbackType | null>
@@ -62,42 +32,8 @@ const ComparativeSkillAnalysis = () => {
   const [editCount, setEditCount] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
 
-  // start with local mock data so UI never goes blank
-  const [peerList, setPeerList] = useState<Peer[]>(fallbackPeers as Peer[]);
-  const [skillScoreList, setSkillScoreList] = useState<SkillScoreRow[]>(
-    fallbackSkillScores as SkillScoreRow[],
-  );
-
-  // Load DB JSON once and override local mocks if present
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const payload = await getMockReport();
-        const peersFromDb = extractPeersFromPayload(payload);
-        const scoresFromDb = extractSkillScoresFromPayload(payload);
-
-        if (!cancelled) {
-          if (Array.isArray(peersFromDb) && peersFromDb.length > 0) {
-            setPeerList(peersFromDb);
-          }
-          if (Array.isArray(scoresFromDb) && scoresFromDb.length > 0) {
-            setSkillScoreList(scoresFromDb);
-          }
-        }
-      } catch (e) {
-        console.error(
-          "ComparativeSkillAnalysis: DB load failed, using fallback mock data:",
-          e,
-        );
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const peerList = reportPeers as Peer[];
+  const skillScoreList = reportSkillScores as SkillScoreRow[];
 
   const userPeer: Peer | undefined =
     useMemo(() => peerList.find((p) => p.isUser) ?? peerList[0], [peerList]) ??
@@ -111,7 +47,6 @@ const ComparativeSkillAnalysis = () => {
   );
 
   const handleFeedback = (skillCluster: string, type: FeedbackType) => {
-    // free: first edit, then paywall
     if (feedbackGiven[skillCluster]) {
       if (editCount >= 1) {
         setShowPaywall(true);
@@ -123,7 +58,6 @@ const ComparativeSkillAnalysis = () => {
     setEditCount((prev) => prev + 1);
   };
 
-  // strengths & development areas based on user row
   const strengths = useMemo(
     () =>
       skillScoreList
@@ -135,7 +69,7 @@ const ComparativeSkillAnalysis = () => {
   const developmentAreas = useMemo(
     () =>
       skillScoreList
-        .filter((s) => s.scores?.[userName] === 1)
+        .filter((s) => s.scores?.[userName] <= 1)
         .map((s) => s.skillCluster),
     [skillScoreList, userName],
   );
@@ -280,7 +214,7 @@ const ComparativeSkillAnalysis = () => {
             <div className="h-2 w-2 rounded-full bg-primary" />
 
             <h3 className="font-semibold text-foreground">
-              {userName}&apos;s Strengths (Score 3)
+              {userName}&apos;s Strengths (Score 2-3)
             </h3>
           </div>
           <ul className="space-y-1.5">
@@ -295,10 +229,28 @@ const ComparativeSkillAnalysis = () => {
                 </li>
               ))
             ) : (
-              <li className="text-sm text-muted-foreground">
-                Once we have more high-scoring clusters, we&apos;ll highlight your top
-                strengths here.
-              </li>
+              // Also show score=2 clusters as strengths when no 3s exist
+              skillScoreList
+                .filter((s) => s.scores?.[userName] === 2)
+                .map((s) => s.skillCluster)
+                .length > 0 ? (
+                skillScoreList
+                  .filter((s) => s.scores?.[userName] === 2)
+                  .map((s) => (
+                    <li
+                      key={s.skillCluster}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
+                      <span className="mt-1 text-primary">•</span>
+                      {s.skillCluster}
+                    </li>
+                  ))
+              ) : (
+                <li className="text-sm text-muted-foreground">
+                  Once we have more high-scoring clusters, we&apos;ll highlight your top
+                  strengths here.
+                </li>
+              )
             )}
           </ul>
         </div>
@@ -307,7 +259,7 @@ const ComparativeSkillAnalysis = () => {
           <div className="mb-3 flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-warning" />
             <h3 className="font-semibold text-foreground">
-              Development Areas (Score 1)
+              Development Areas (Score 0-1)
             </h3>
           </div>
           <ul className="space-y-1.5">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { peers, axisOptions } from "@/data/mockData";
+import { peers, axisOptions, quadrant, clusterDefinition } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -12,19 +12,17 @@ import PaywallModal from "@/components/PaywallModal";
 import Disclaimer from "@/components/Disclaimer";
 import { RefreshCw } from "lucide-react";
 
-// Local type to describe axis option shape
 type AxisOption = {
   id: string;
   label: string;
 };
 
 const SkillMapping = () => {
-  // Use the first option's id as default, fall back to simple strings if needed
   const [xAxis, setXAxis] = useState(
-    (axisOptions.xAxis[0] as AxisOption | undefined)?.id ?? "Product"
+    (axisOptions.xAxis[0] as AxisOption | undefined)?.id ?? "x"
   );
   const [yAxis, setYAxis] = useState(
-    (axisOptions.yAxis[0] as AxisOption | undefined)?.id ?? "Leadership"
+    (axisOptions.yAxis[0] as AxisOption | undefined)?.id ?? "y"
   );
   const [recalcCount, setRecalcCount] = useState(0);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -35,10 +33,8 @@ const SkillMapping = () => {
       return;
     }
     setRecalcCount((prev) => prev + 1);
-    // Future: trigger real recalculation here
   };
 
-  // Get display label from id
   const getAxisLabel = (axis: "x" | "y", id: string) => {
     const list =
       axis === "x"
@@ -48,16 +44,28 @@ const SkillMapping = () => {
     return found?.label ?? id;
   };
 
-  // Position mapping for peers on the quadrant
-  const getPeerPosition = (peer: (typeof peers)[0]) => {
-    // Normalize to percentage positions
-    const x = (peer.productTechScore / 10) * 100;
-    const y = 100 - (peer.gtmScore / 10) * 100; // Invert Y for CSS
-    return { x, y };
+  // Use quadrant data for positions (x, y are 0-10 scale)
+  const getPeerPosition = (peerId: string) => {
+    const q = quadrant.find((q) => q.personId === peerId);
+    if (q) {
+      return { x: (q.x / 10) * 100, y: 100 - (q.y / 10) * 100 };
+    }
+    // Fallback to peer xScore/yScore
+    const peer = peers.find((p) => p.id === peerId);
+    if (peer) {
+      return { x: (peer.xScore / 10) * 100, y: 100 - (peer.yScore / 10) * 100 };
+    }
+    return { x: 50, y: 50 };
   };
 
   const xAxisLabel = getAxisLabel("x", xAxis);
   const yAxisLabel = getAxisLabel("y", yAxis);
+
+  // Short display name: first name only
+  const getShortName = (peer: typeof peers[0]) => {
+    if (peer.isUser) return peer.name.split(" ")[0];
+    return peer.name.split(" ")[0];
+  };
 
   return (
     <div className="animate-fade-in">
@@ -66,7 +74,7 @@ const SkillMapping = () => {
           Skill Mapping vis-à-vis Peers
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Positioning analysis among retail leadership cohort
+          Positioning analysis among {clusterDefinition?.axes?.x?.label ?? "peers"} cohort
         </p>
       </div>
 
@@ -121,21 +129,21 @@ const SkillMapping = () => {
           {/* Quadrant Labels */}
           <div className="absolute left-0 top-0 text-xs text-muted-foreground">
             <div>Low {xAxisLabel}</div>
-            <div>High GTM</div>
+            <div>High {yAxisLabel}</div>
           </div>
           <div className="absolute right-0 top-0 text-right">
             <div className="text-xs font-medium text-success">Target Zone</div>
             <div className="text-xs text-success">
-              High {xAxisLabel} + GTM
+              High {xAxisLabel} + {yAxisLabel}
             </div>
           </div>
           <div className="absolute bottom-0 left-0 text-xs text-muted-foreground">
             <div>Low {xAxisLabel}</div>
-            <div>Low GTM</div>
+            <div>Low {yAxisLabel}</div>
           </div>
           <div className="absolute bottom-0 right-0 text-right text-xs text-muted-foreground">
             <div>High {xAxisLabel}</div>
-            <div>Low GTM</div>
+            <div>Low {yAxisLabel}</div>
           </div>
 
           {/* Quadrant Grid */}
@@ -149,7 +157,7 @@ const SkillMapping = () => {
 
             {/* Axis Labels */}
             <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-muted-foreground">
-              {xAxisLabel}/Tech Depth
+              {xAxisLabel}
             </div>
             <div className="absolute -left-6 top-1/2 origin-center -translate-y-1/2 -rotate-90 text-xs text-muted-foreground">
               {yAxisLabel}
@@ -157,7 +165,7 @@ const SkillMapping = () => {
 
             {/* Peer Points */}
             {peers.map((peer) => {
-              const pos = getPeerPosition(peer);
+              const pos = getPeerPosition(peer.id);
               return (
                 <div
                   key={peer.id}
@@ -171,7 +179,7 @@ const SkillMapping = () => {
                         : "bg-primary/80 text-primary-foreground"
                     }`}
                   >
-                    {peer.isUser ? "Betsy" : peer.name.split(" ")[0]}
+                    {getShortName(peer)}
                   </div>
                 </div>
               );
@@ -185,14 +193,13 @@ const SkillMapping = () => {
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-primary" />
           <span className="text-muted-foreground">
-            Top Left (High GTM, Low {xAxisLabel}) - Strong operators & GTM
-            leaders
+            Top Left (High {yAxisLabel}, Low {xAxisLabel}) - Strong {yAxisLabel}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <div className="h-3 w-3 rounded-full bg-success" />
           <span className="text-muted-foreground">
-            Top Right (High GTM, High {xAxisLabel}) - Complete CEO profile —
+            Top Right (High {yAxisLabel}, High {xAxisLabel}) - Complete profile —
             target zone
           </span>
         </div>
