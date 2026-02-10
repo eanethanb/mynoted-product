@@ -46,14 +46,16 @@ const ReportPage = () => {
       setLoading(true);
       setError("");
       try {
-        // Try edge function first
+        // Use POST to send employee_id via body
         const res = await fetch(
-          `${SUPABASE_URL}/functions/v1/employee-report?employee_id=${employeeId}`,
+          `${SUPABASE_URL}/functions/v1/ping`,
           {
+            method: "POST",
             headers: {
               Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
               "Content-Type": "application/json",
             },
+            body: JSON.stringify({ employee_id: employeeId }),
           }
         );
         if (!res.ok) {
