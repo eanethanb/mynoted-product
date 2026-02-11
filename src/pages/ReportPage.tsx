@@ -57,12 +57,13 @@ const ReportPage = () => {
         if (!data) throw new Error("No report found");
 
         setReport(data.report_json);
-      } catch (err) {
-        console.log("Edge function unavailable:", err);
+      } catch (err: any) {
+        const msg = err?.message || err?.code || String(err);
+        console.error("Report fetch failed:", msg, err);
         if (employeeId === "demo") {
           setReport(reportDataFallback);
         } else {
-          setError("Could not load report. The backend function is currently unavailable.");
+          setError(msg);
         }
       } finally {
         setLoading(false);
