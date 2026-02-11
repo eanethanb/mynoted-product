@@ -45,18 +45,14 @@ const ReportPage = () => {
       setLoading(true);
       setError("");
       try {
-        const { data, error: queryError } = await (supabase as any)
-          .from("employee_reports")
-          .select("report_json, report_type, created_at, employee_id, run_id")
-          .eq("employee_id", employeeId)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+        const { data, error: queryError } = await (supabase as any).rpc("get_employee_report", {
+          p_employee_id: employeeId,
+        });
 
         if (queryError) throw queryError;
         if (!data) throw new Error("No report found");
 
-        setReport(data.report_json);
+        setReport(data);
       } catch (err: any) {
         const msg = err?.message || err?.code || String(err);
         console.error("Report fetch failed:", msg, err);
