@@ -11,9 +11,8 @@ import SkillGapCourses from "@/components/screens/SkillGapCourses";
 import CreateCourse from "@/components/screens/CreateCourse";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import reportDataFallback from "@/data/reportData.json";
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 
 const tabs = [
   { id: "peers", label: "Peer Profiles" },
@@ -46,22 +45,17 @@ const ReportPage = () => {
       setLoading(true);
       setError("");
       try {
-        // Use POST to send employee_id via body
-        const res = await fetch(
-          `${SUPABASE_URL}/functions/v1/ping`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ employee_id: employeeId }),
-          }
-        );
-        if (!res.ok) {
-          throw new Error("Edge function unavailable");
-        }
-        const data = await res.json();
+        const { data, error: queryError } = await (supabase as any)
+          .from("employee_reports")
+          .select("report_json, report_type, created_at, employee_id, run_id")
+          .eq("employee_id", employeeId)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (queryError) throw queryError;
+        if (!data) throw new Error("No report found");
+
         setReport(data.report_json);
       } catch (err) {
         console.log("Edge function unavailable:", err);
