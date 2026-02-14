@@ -42,7 +42,7 @@ const createEmptyPeerEntry = (): PeerEntry => ({
 });
 
 const PeerProfiles = () => {
-  const { peers: reportPeers, meta, clusterDefinition } = useReportData();
+  const { peers: reportPeers, meta, axisOptions } = useReportData();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
 
@@ -166,8 +166,8 @@ const PeerProfiles = () => {
                 )}
               </div>
               <div className="flex shrink-0 gap-3 text-[11px] font-medium">
-                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-primary">{(clusterDefinition as any)?.axes?.x?.label?.split(" ")[0] ?? "X"}: {peer.xScore}</span>
-                <span className="rounded-md bg-success/10 px-2 py-0.5 text-success">{(clusterDefinition as any)?.axes?.y?.label?.split(" ")[0] ?? "Y"}: {peer.yScore}</span>
+                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-primary">{axisOptions.xAxis[0]?.label?.split(" ")[0] ?? "X"}: {peer.xScore}</span>
+                <span className="rounded-md bg-success/10 px-2 py-0.5 text-success">{axisOptions.yAxis[0]?.label?.split(" ")[0] ?? "Y"}: {peer.yScore}</span>
               </div>
             </div>
           </div>

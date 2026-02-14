@@ -68,7 +68,18 @@ const ReportPage = () => {
         const data = await response.json();
         if (!data) throw new Error("No report found");
 
-        setReport(data);
+        // Handle versioning: if RPC returns an array (multiple versions),
+        // pick the one with the highest report_version
+        if (Array.isArray(data)) {
+          if (data.length === 0) throw new Error("No report found");
+          // Sort by report_version descending, pick latest
+          const sorted = data.sort((a: any, b: any) =>
+            (b.report_version ?? b.repeat_version ?? 0) - (a.report_version ?? a.repeat_version ?? 0)
+          );
+          setReport(sorted[0]);
+        } else {
+          setReport(data);
+        }
       } catch (err: any) {
         const msg = err?.message || String(err);
         console.error("Report fetch failed:", msg, err);

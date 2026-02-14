@@ -9,54 +9,56 @@ import reportData from "./reportData.json";
 export const peers = reportData.peers;
 
 // Heatmap matrix — used by ComparativeSkillAnalysis
-// Transform heatmapMatrix into the skillScores format the heatmap component expects
-export const skillScores = reportData.heatmapMatrix.map((row) => ({
+export const skillScores = (reportData.heatmapMatrix ?? []).map((row: any) => ({
   skillCluster: row.cluster,
   scores: Object.fromEntries(
     reportData.peers.map((peer) => [
       peer.name,
-      (row.values as Record<string, number>)[peer.id] ?? 0,
+      (row.values as Record<string, number>)?.[peer.id] ?? 0,
     ])
   ),
 }));
 
 // Skill gaps — used by SkillGapsAnalysis
-// Map gapActions to the shape the UI expects (id, title, description, category, gapScore, actionItems)
-export const skillGaps = reportData.gapActions.map((ga, i) => ({
+// New format: skillGaps array with skill, importance, description, competitorCompanies
+export const skillGaps = (reportData.skillGaps ?? []).map((sg: any, i: number) => ({
   id: `gap-${i + 1}`,
-  title: ga.cluster,
-  description: ga.description,
-  category: ga.category,
-  gapScore: ga.gap,
-  actionItems: ga.actions,
-  timeline: ga.timeline,
+  title: sg.skill,
+  description: sg.description,
+  category: sg.category ?? sg.importance,
+  importance: sg.importance,
+  gapScore: sg.importance === "Critical" ? 3 : sg.importance === "Important" ? 2 : 1,
+  competitorCompanies: sg.competitorCompanies ?? [],
 }));
 
-// Axis options — used by SkillMapping quadrant
+// Gap actions — used by SkillGapsAnalysis for action items
+// New format has axisId/axisLabel instead of cluster/description/category
+export const gapActions = (reportData.gapActions ?? []).map((ga: any, i: number) => ({
+  id: `action-${i + 1}`,
+  title: ga.axisLabel ?? ga.cluster ?? "",
+  description: ga.description ?? "",
+  category: ga.category ?? "",
+  gapScore: ga.gap,
+  actionItems: ga.actions ?? [],
+  timeline: ga.timeline ?? "",
+}));
+
+// Axis options — derived from axisGaps (new format)
+const xAxes = (reportData.axisGaps ?? []).filter((a: any) => a.axisType === "x");
+const yAxes = (reportData.axisGaps ?? []).filter((a: any) => a.axisType === "y");
+
 export const axisOptions = {
-  xAxis: [
-    {
-      id: reportData.meta.axisScoreFields.x,
-      label: reportData.meta.axisScoreFields.xLabel,
-    },
-  ],
-  yAxis: [
-    {
-      id: reportData.meta.axisScoreFields.y,
-      label: reportData.meta.axisScoreFields.yLabel,
-    },
-  ],
+  xAxis: xAxes.map((a: any) => ({ id: a.axisId, label: a.axisLabel })),
+  yAxis: yAxes.map((a: any) => ({ id: a.axisId, label: a.axisLabel })),
 };
 
 // Courses — used by SkillGapCourses
-// Transform coursePlan into the shape the courses UI expects
 export const courses = reportData.coursePlan.map((cp, i) => {
   const totalHours =
     (cp.levels.beginner?.estimatedHours ?? 0) +
     (cp.levels.intermediate?.estimatedHours ?? 0) +
     (cp.levels.advanced?.estimatedHours ?? 0);
 
-  // Build chapters from levels
   const chapters = (["beginner", "intermediate", "advanced"] as const)
     .filter((lvl) => cp.levels[lvl])
     .map((lvl, j) => ({
@@ -71,7 +73,7 @@ export const courses = reportData.coursePlan.map((cp, i) => {
     level: cp.importance,
     provider: "MyNoted AI",
     description: cp.reason,
-    url: reportData.primaryCourseLink?.url ?? "#",
+    url: (reportData as any).primaryCourseLink?.url ?? "#",
     duration: `${totalHours}h`,
     levels: 3,
     gapScore: cp.importance === "Critical" ? 3 : 2,
@@ -79,11 +81,11 @@ export const courses = reportData.coursePlan.map((cp, i) => {
   };
 });
 
-// Recommended courses from the JSON (pre-built course links)
-export const recommendedCourses = reportData.recommendedCourses ?? [];
+// Recommended courses from the JSON
+export const recommendedCourses = (reportData as any).recommendedCourses ?? [];
 
-// Video resources — currently empty in JSON, provide empty array
-export const videoResources = (reportData.recommendedCourses?.[0]?.videoResources ?? []).map(
+// Video resources
+export const videoResources = ((reportData as any).recommendedCourses?.[0]?.videoResources ?? []).map(
   (v: any, i: number) => ({
     id: `vid-${i + 1}`,
     title: v.title ?? "Video",
@@ -96,49 +98,23 @@ export const videoResources = (reportData.recommendedCourses?.[0]?.videoResource
 
 // Course link
 export const courseLink = {
-  label: reportData.primaryCourseLink?.label ?? "View more curated courses",
-  url: reportData.primaryCourseLink?.url ?? "#",
+  label: (reportData as any).primaryCourseLink?.label ?? "View more curated courses",
+  url: (reportData as any).primaryCourseLink?.url ?? "#",
 };
 
-// SWOT / Pros & Cons — used by SwotAnalysis
-export const competitiveAdvantages = reportData.prosAndCons.pros;
-export const developmentOpportunities = reportData.prosAndCons.cons;
+// SWOT / Pros & Cons
+export const competitiveAdvantages = (reportData as any).prosAndCons?.pros ?? [];
+export const developmentOpportunities = (reportData as any).prosAndCons?.cons ?? [];
 
-// Paid features — used by PaidFeatures
-export const experienceSignals = reportData.experienceSignals ?? [];
+// Paid features
+export const experienceSignals = (reportData as any).experienceSignals ?? [];
 export const goalChips = reportData.goalChips ?? [];
 
 // Meta / executive summary
 export const meta = reportData.meta;
-export const executiveSummary = reportData.executiveSummary;
-export const personSkills = reportData.personSkills;
-export const quadrant = reportData.quadrant;
-export const clusterDefinition = reportData.clusterDefinition;
+export const executiveSummary = (reportData as any).executiveSummary ?? "";
+export const personSkills = (reportData as any).personSkills ?? {};
+export const clusterDefinition = (reportData as any).clusterDefinition ?? {};
 export const roadmap = reportData.roadmap;
-
-// ---------------------- DB API LOADER (kept for future use) ----------------------
-
-const API_BASE = "http://127.0.0.1:5050";
-
-type LatestReportResponse = {
-  id: number | string;
-  target_person: string;
-  payload: any;
-  created_at: string;
-};
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`HTTP ${res.status} ${res.statusText} - ${text}`);
-  }
-  return (await res.json()) as T;
-}
-
-export async function getMockReport() {
-  const data = await fetchJson<LatestReportResponse>(
-    `${API_BASE}/api/report/latest`
-  );
-  return data.payload;
-}
+export const axisGaps = reportData.axisGaps ?? [];
+export const gaps = reportData.gaps ?? [];
