@@ -189,7 +189,20 @@ const SkillGapsAnalysis = () => {
                 <h3 className="text-base font-semibold text-foreground md:text-lg">{gap.title}</h3>
                 <p className="mt-1 text-xs text-muted-foreground md:text-sm">{gap.description}</p>
               </div>
-              <GapBadge score={gap.gapScore} />
+              <div className="flex items-center gap-2">
+                {gap.importance && (
+                  <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium md:px-3 md:py-1 md:text-xs ${
+                    gap.importance === "Critical"
+                      ? "bg-destructive/10 text-destructive border-destructive/20"
+                      : gap.importance === "Important"
+                      ? "bg-warning/10 text-warning border-warning/20"
+                      : "bg-success/10 text-success border-success/20"
+                  }`}>
+                    {gap.importance}
+                  </span>
+                )}
+                <GapBadge score={gap.gapScore} />
+              </div>
             </div>
 
             <div className="mt-3 md:mt-4">
@@ -203,26 +216,14 @@ const SkillGapsAnalysis = () => {
               </Button>
             </div>
 
-            {/* Timeline badge */}
-            {gap.timeline && (
+            {/* Competitor Companies */}
+            {gap.competitorCompanies && gap.competitorCompanies.length > 0 && gap.competitorCompanies[0] !== "unknown" && (
               <div className="mt-2">
                 <span className="inline-flex items-center rounded-md bg-accent px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                  Timeline: {gap.timeline}
+                  Found at: {gap.competitorCompanies.join(", ")}
                 </span>
               </div>
             )}
-
-            <div className="mt-3 md:mt-4">
-              <h4 className="text-xs font-medium text-foreground md:text-sm">ACTION ITEMS:</h4>
-              <ul className="mt-1.5 space-y-1 md:mt-2 md:space-y-1.5">
-                {(gap.actionItems || []).map((item: string, index: number) => (
-                  <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground md:text-sm leading-relaxed">
-                    <span className="mt-0.5 shrink-0 text-primary">→</span>
-                    <span className="line-clamp-3">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
 
             {/* Accuracy Assessment */}
             <div className="mt-5 border-t border-border pt-4">

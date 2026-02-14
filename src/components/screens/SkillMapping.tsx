@@ -18,22 +18,35 @@ type AxisOption = {
 };
 
 const SkillMapping = () => {
-  const { peers, axisOptions, quadrant, clusterDefinition } = useReportData();
-  const [xAxis, setXAxis] = useState(
-    (axisOptions.xAxis[0] as AxisOption | undefined)?.id ?? "x"
-  );
-  const [yAxis, setYAxis] = useState(
-    (axisOptions.yAxis[0] as AxisOption | undefined)?.id ?? "y"
-  );
-  const [recalcCount, setRecalcCount] = useState(0);
+  const { peers, axisOptions } = useReportData();
+
+  // Default to the first x and y axis options
+  const defaultXId = (axisOptions.xAxis[0] as AxisOption | undefined)?.id ?? "x0";
+  const defaultYId = (axisOptions.yAxis[0] as AxisOption | undefined)?.id ?? "y0";
+
+  const [xAxis, setXAxis] = useState(defaultXId);
+  const [yAxis, setYAxis] = useState(defaultYId);
   const [showPaywall, setShowPaywall] = useState(false);
 
   const handleRecalculate = () => {
-    if (recalcCount >= 1) {
+    setShowPaywall(true);
+  };
+
+  // When user changes axis selection, show paywall
+  const handleXAxisChange = (value: string) => {
+    if (value !== defaultXId) {
       setShowPaywall(true);
       return;
     }
-    setRecalcCount((prev) => prev + 1);
+    setXAxis(value);
+  };
+
+  const handleYAxisChange = (value: string) => {
+    if (value !== defaultYId) {
+      setShowPaywall(true);
+      return;
+    }
+    setYAxis(value);
   };
 
   const getAxisLabel = (axis: "x" | "y", id: string) => {
@@ -45,14 +58,9 @@ const SkillMapping = () => {
     return found?.label ?? id;
   };
 
-  // Use quadrant data for positions (x, y are 0-10 scale)
+  // Use peer xScore/yScore for default axis positioning (0-10 scale)
   const getPeerPosition = (peerId: string) => {
-    const q = quadrant.find((q) => q.personId === peerId);
-    if (q) {
-      return { x: (q.x / 10) * 100, y: 100 - (q.y / 10) * 100 };
-    }
-    // Fallback to peer xScore/yScore
-    const peer = peers.find((p) => p.id === peerId);
+    const peer = peers.find((p: any) => p.id === peerId);
     if (peer) {
       return { x: (peer.xScore / 10) * 100, y: 100 - (peer.yScore / 10) * 100 };
     }
@@ -64,7 +72,6 @@ const SkillMapping = () => {
 
   // Short display name: first name only
   const getShortName = (peer: typeof peers[0]) => {
-    if (peer.isUser) return peer.name.split(" ")[0];
     return peer.name.split(" ")[0];
   };
 
@@ -75,7 +82,7 @@ const SkillMapping = () => {
           Skill Mapping vis-à-vis Peers
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Positioning analysis among {clusterDefinition?.axes?.x?.label ?? "peers"} cohort
+          Positioning analysis among peer cohort
         </p>
       </div>
 
@@ -87,8 +94,8 @@ const SkillMapping = () => {
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground">X-axis:</span>
-            <Select value={xAxis} onValueChange={setXAxis}>
-              <SelectTrigger className="w-40">
+            <Select value={xAxis} onValueChange={handleXAxisChange}>
+              <SelectTrigger className="w-64">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -103,8 +110,8 @@ const SkillMapping = () => {
 
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground">Y-axis:</span>
-            <Select value={yAxis} onValueChange={setYAxis}>
-              <SelectTrigger className="w-40">
+            <Select value={yAxis} onValueChange={handleYAxisChange}>
+              <SelectTrigger className="w-64">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -159,7 +166,7 @@ const SkillMapping = () => {
             </div>
 
             {/* Peer Points */}
-            {peers.map((peer) => {
+            {peers.map((peer: any) => {
               const pos = getPeerPosition(peer.id);
               return (
                 <div
