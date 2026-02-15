@@ -142,7 +142,7 @@ const ReportPage = () => {
 
   return (
     <ReportProvider report={report} employeeId={employeeId!}>
-      <Layout activeTab={activeTab} visitedTabs={visitedTabs}>
+      <Layout activeTab={activeTab} visitedTabs={visitedTabs} reportVersion={report?.report_version ?? report?.repeat_version ?? null}>
         <TabNavigation
           tabs={tabs}
           activeTab={activeTab}
