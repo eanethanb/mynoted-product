@@ -8,6 +8,7 @@ interface LayoutProps {
   children: ReactNode;
   activeTab?: string;
   visitedTabs?: string[];
+  reportVersion?: number | null;
 }
 
 const sectionLabels: Record<string, string> = {
@@ -19,7 +20,7 @@ const sectionLabels: Record<string, string> = {
   create: 'Create Free Course',
 };
 
-const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
+const Layout = ({ children, activeTab, visitedTabs = [], reportVersion }: LayoutProps) => {
   const [hasRunReport, setHasRunReport] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
@@ -53,6 +54,11 @@ const Layout = ({ children, activeTab, visitedTabs = [] }: LayoutProps) => {
           </div>
           <div className="hidden items-center gap-4 sm:flex">
             <span className="text-sm text-muted-foreground">Career Intelligence Workspace</span>
+            {reportVersion != null && (
+              <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                v{reportVersion}
+              </span>
+            )}
           </div>
         </div>
       </header>

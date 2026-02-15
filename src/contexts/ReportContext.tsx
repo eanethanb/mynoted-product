@@ -140,5 +140,6 @@ export function useReportData() {
     recommendedCourses: r.recommendedCourses ?? [],
     experienceSignals: r.experienceSignals ?? [],
     goalChips: r.goalChips ?? [],
+    reportVersion: r.report_version ?? r.repeat_version ?? null,
   };
 }
