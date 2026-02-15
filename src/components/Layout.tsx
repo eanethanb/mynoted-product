@@ -52,8 +52,8 @@ const Layout = ({ children, activeTab, visitedTabs = [], reportVersion }: Layout
             </div>
             <span className="text-base font-semibold text-foreground md:text-lg">MyNoted AI</span>
           </div>
-          <div className="hidden items-center gap-4 sm:flex">
-            <span className="text-sm text-muted-foreground">Career Intelligence Workspace</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm text-muted-foreground sm:inline">Career Intelligence Workspace</span>
             {reportVersion != null && (
               <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
                 v{reportVersion}
