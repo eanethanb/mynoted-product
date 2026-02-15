@@ -51,14 +51,12 @@ const Layout = ({ children, activeTab, visitedTabs = [], reportVersion }: Layout
               <span className="text-sm font-bold text-primary-foreground">M</span>
             </div>
             <span className="text-base font-semibold text-foreground md:text-lg">MyNoted AI</span>
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+              v{reportVersion ?? '—'}
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-muted-foreground sm:inline">Career Intelligence Workspace</span>
-            {reportVersion != null && (
-              <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                v{reportVersion}
-              </span>
-            )}
           </div>
         </div>
       </header>
